@@ -1,0 +1,29 @@
+package net.pneumono.locator_lodestones.mixin;
+
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.hud.bar.Bar;
+import net.minecraft.client.gui.hud.bar.LocatorBar;
+import net.minecraft.client.render.RenderTickCounter;
+import net.pneumono.locator_lodestones.LodestoneBarRendering;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+@Mixin(LocatorBar.class)
+public abstract class LocatorBarMixin implements Bar {
+    @Shadow
+    @Final
+    private MinecraftClient client;
+
+    @Inject(
+            method = "renderAddons",
+            at = @At("RETURN")
+    )
+    private void renderLodestoneWaypoints(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
+        LodestoneBarRendering.renderLodestoneWaypoints(this.client, context, this.getCenterY(this.client.getWindow()));
+    }
+}
