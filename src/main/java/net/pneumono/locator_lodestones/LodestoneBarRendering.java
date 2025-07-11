@@ -7,6 +7,7 @@ import net.minecraft.client.resource.waypoint.WaypointStyleAsset;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.*;
+import net.minecraft.world.World;
 import net.minecraft.world.waypoint.TrackedWaypoint;
 import net.minecraft.world.waypoint.Waypoint;
 import net.minecraft.world.waypoint.WaypointStyles;
@@ -64,12 +65,22 @@ public class LodestoneBarRendering {
         }
     }
 
+    /**
+     * Adaptation of a vanilla method.
+     *
+     * @see TrackedWaypoint#getRelativeYaw(World, TrackedWaypoint.YawProvider)
+     */
     private static double getRelativeYaw(BlockPos pos, TrackedWaypoint.YawProvider yawProvider) {
         Vec3d vec3d = yawProvider.getCameraPos().subtract(new Vec3d(pos.getX(), pos.getY(), pos.getZ())).rotateYClockwise();
         float f = (float)MathHelper.atan2(vec3d.getZ(), vec3d.getX()) * (180.0F / (float)Math.PI);
         return MathHelper.subtractAngles(yawProvider.getCameraYaw(), f);
     }
 
+    /**
+     * Adaptation of a vanilla method.
+     *
+     * @see TrackedWaypoint#getPitch(World, TrackedWaypoint.PitchProvider)
+     */
     private static TrackedWaypoint.Pitch getPitch(BlockPos pos, TrackedWaypoint.PitchProvider cameraProvider) {
         Vec3d vec3d = cameraProvider.project(new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
         boolean bl = vec3d.z > 1.0;
