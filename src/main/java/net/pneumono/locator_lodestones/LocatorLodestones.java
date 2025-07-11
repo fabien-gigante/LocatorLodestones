@@ -31,7 +31,7 @@ public class LocatorLodestones implements ClientModInitializer {
 		return Identifier.of(MOD_ID, path);
 	}
 
-	public static List<BlockPos> getLodestones(PlayerEntity player) {
+	public static List<BlockPos> getLodestonePositions(PlayerEntity player) {
 		List<BlockPos> lodestones = new ArrayList<>();
 
 		List<ItemStack> stacks = new ArrayList<>();
@@ -46,12 +46,12 @@ public class LocatorLodestones implements ClientModInitializer {
 
 		for (ItemStack stack : stacks) {
 
-			getLodestone(player, stack).ifPresent(lodestones::add);
+			getLodestonePosition(player, stack).ifPresent(lodestones::add);
 
 			BundleContentsComponent contentsComponent = stack.get(DataComponentTypes.BUNDLE_CONTENTS);
 			if (contentsComponent != null) {
 				contentsComponent.stream().forEach(
-						bundledStack -> getLodestone(player, bundledStack).ifPresent(lodestones::add)
+						bundledStack -> getLodestonePosition(player, bundledStack).ifPresent(lodestones::add)
 				);
 			}
 		}
@@ -59,7 +59,7 @@ public class LocatorLodestones implements ClientModInitializer {
 		return lodestones;
 	}
 
-	private static Optional<BlockPos> getLodestone(PlayerEntity player, ItemStack stack) {
+	private static Optional<BlockPos> getLodestonePosition(PlayerEntity player, ItemStack stack) {
 		LodestoneTrackerComponent trackerComponent = stack.get(DataComponentTypes.LODESTONE_TRACKER);
 		if (trackerComponent != null && trackerComponent.target().isPresent()) {
 

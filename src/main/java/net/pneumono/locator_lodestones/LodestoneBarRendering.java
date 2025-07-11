@@ -21,14 +21,14 @@ public class LodestoneBarRendering {
     public static void renderLodestoneWaypoints(MinecraftClient client, DrawContext context, int centerY) {
         if (client.player == null || client.cameraEntity == null) return;
 
-        List<BlockPos> lodestones = LocatorLodestones.getLodestones(client.player);
+        List<BlockPos> lodestones = LocatorLodestones.getLodestonePositions(client.player);
 
         lodestones.stream().sorted(
                 Comparator.comparingDouble(pos -> pos.getSquaredDistance(client.cameraEntity.getPos()))
-        ).forEachOrdered(pos -> renderLodestone(client, context, centerY, pos));
+        ).forEachOrdered(pos -> renderLodestoneWaypoint(client, context, centerY, pos));
     }
 
-    private static void renderLodestone(MinecraftClient client, DrawContext context, int centerY, BlockPos pos) {
+    private static void renderLodestoneWaypoint(MinecraftClient client, DrawContext context, int centerY, BlockPos pos) {
         if (client.player == null || client.cameraEntity == null) return;
 
         double relativeYaw = getRelativeYaw(pos, client.gameRenderer.getCamera());
