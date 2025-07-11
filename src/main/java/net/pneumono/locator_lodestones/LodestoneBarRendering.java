@@ -43,7 +43,7 @@ public class LodestoneBarRendering {
                 (float) Math.sqrt(pos.getSquaredDistance(client.cameraEntity.getPos()))
         );
         int color = config.color.orElseGet(() -> ColorHelper.withBrightness(
-                ColorHelper.withAlpha(255, pos.hashCode()), 0.9F
+                ColorHelper.withAlpha(255, pos.toString().hashCode()), 0.9F
         ));
 
         int l = (int)(relativeYaw * 173.0 / 2.0 / 60.0);
