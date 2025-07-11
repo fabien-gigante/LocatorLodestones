@@ -1,0 +1,35 @@
+{
+	"schemaVersion": 1,
+	"id": "locator_lodestones",
+	"version": "${version}",
+	"name": "Locator Lodestones",
+	"description": "Adds Lodestones to the Player Locator Bar",
+	"authors": [
+		"Pneumono_"
+	],
+	"contact": {
+		"homepage": "https://github.com/PneumonoIsNotAvailable/LocatorLodestones",
+		"sources": "https://github.com/PneumonoIsNotAvailable/LocatorLodestones",
+		"issues": "https://github.com/PneumonoIsNotAvailable/LocatorLodestones/issues"
+	},
+	"license": "MIT",
+	"icon": "assets/locator_lodestones/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"client": [
+			"net.pneumono.locator_lodestones.LocatorLodestones"
+		]
+	},
+	"mixins": [
+		{
+			"config": "locator_lodestones.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.16.14",
+		"minecraft": ">=1.21.6 <=1.21.7",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
