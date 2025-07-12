@@ -35,7 +35,6 @@ public class LodestoneBarRendering {
         double relativeYaw = getRelativeYaw(pos, client.gameRenderer.getCamera());
         if (relativeYaw <= -61.0 || relativeYaw > 60.0)  return;
 
-        int j = MathHelper.ceil((context.getScaledWindowWidth() - 9) / 2.0F);
         Waypoint.Config config = new Waypoint.Config();
         config.style = RegistryKey.of(WaypointStyles.REGISTRY, LocatorLodestones.id("lodestone"));
 
@@ -47,8 +46,9 @@ public class LodestoneBarRendering {
                 ColorHelper.withAlpha(255, pos.toString().hashCode()), 0.9F
         ));
 
-        int l = (int)(relativeYaw * 173.0 / 2.0 / 60.0);
-        context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, identifier, j + l, centerY - 2, 9, 9, color);
+        int x = MathHelper.ceil((context.getScaledWindowWidth() - 9) / 2.0F) + (int)(relativeYaw * 173.0 / 2.0 / 60.0);
+        context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, identifier, x, centerY - 2, 9, 9, color);
+
         TrackedWaypoint.Pitch pitch = getPitch(pos, client.gameRenderer);
         if (pitch != TrackedWaypoint.Pitch.NONE) {
             int yOffset;
@@ -61,7 +61,7 @@ public class LodestoneBarRendering {
                 texture = ARROW_UP;
             }
 
-            context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, texture, j + l + 1, centerY + yOffset, 7, 5);
+            context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, texture, x + 1, centerY + yOffset, 7, 5);
         }
     }
 
