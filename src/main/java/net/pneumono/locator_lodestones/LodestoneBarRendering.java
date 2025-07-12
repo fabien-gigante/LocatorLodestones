@@ -24,12 +24,16 @@ public class LodestoneBarRendering {
 
         List<BlockPos> lodestones = LocatorLodestones.getLodestonePositions(client.player);
 
-        lodestones.stream().sorted(
-                Comparator.comparingDouble(pos -> pos.getSquaredDistance(client.cameraEntity.getPos()))
-        ).forEachOrdered(pos -> renderLodestoneWaypoint(client, context, centerY, pos));
+        lodestones.stream().map(
+                blockPos -> new Vec3d(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5)
+        ).sorted(
+                Comparator.comparingDouble(pos -> pos.squaredDistanceTo(client.cameraEntity.getPos()))
+        ).forEachOrdered(pos -> renderLodestoneWaypoint(
+                client, context, centerY, pos
+        ));
     }
 
-    private static void renderLodestoneWaypoint(MinecraftClient client, DrawContext context, int centerY, BlockPos pos) {
+    private static void renderLodestoneWaypoint(MinecraftClient client, DrawContext context, int centerY, Vec3d pos) {
         if (client.player == null || client.cameraEntity == null) return;
 
         double relativeYaw = getRelativeYaw(pos, client.gameRenderer.getCamera());
@@ -40,7 +44,7 @@ public class LodestoneBarRendering {
 
         WaypointStyleAsset waypointStyleAsset = client.getWaypointStyleAssetManager().get(config.style);
         Identifier identifier = waypointStyleAsset.getSpriteForDistance(
-                (float) Math.sqrt(pos.getSquaredDistance(client.cameraEntity.getPos()))
+                (float) Math.sqrt(pos.squaredDistanceTo(client.cameraEntity.getPos()))
         );
         int color = config.color.orElseGet(() -> ColorHelper.withBrightness(
                 ColorHelper.withAlpha(255, pos.toString().hashCode()), 0.9F
@@ -70,8 +74,8 @@ public class LodestoneBarRendering {
      *
      * @see TrackedWaypoint#getRelativeYaw(World, TrackedWaypoint.YawProvider)
      */
-    private static double getRelativeYaw(BlockPos pos, TrackedWaypoint.YawProvider yawProvider) {
-        Vec3d vec3d = yawProvider.getCameraPos().subtract(new Vec3d(pos.getX(), pos.getY(), pos.getZ())).rotateYClockwise();
+    private static double getRelativeYaw(Vec3d pos, TrackedWaypoint.YawProvider yawProvider) {
+        Vec3d vec3d = yawProvider.getCameraPos().subtract(pos).rotateYClockwise();
         float f = (float)MathHelper.atan2(vec3d.getZ(), vec3d.getX()) * (180.0F / (float)Math.PI);
         return MathHelper.subtractAngles(yawProvider.getCameraYaw(), f);
     }
@@ -81,8 +85,8 @@ public class LodestoneBarRendering {
      *
      * @see TrackedWaypoint#getPitch(World, TrackedWaypoint.PitchProvider)
      */
-    private static TrackedWaypoint.Pitch getPitch(BlockPos pos, TrackedWaypoint.PitchProvider cameraProvider) {
-        Vec3d vec3d = cameraProvider.project(new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
+    private static TrackedWaypoint.Pitch getPitch(Vec3d pos, TrackedWaypoint.PitchProvider cameraProvider) {
+        Vec3d vec3d = cameraProvider.project(pos);
         boolean bl = vec3d.z > 1.0;
         double d = bl ? -vec3d.y : vec3d.y;
         if (d < -1.0) {
