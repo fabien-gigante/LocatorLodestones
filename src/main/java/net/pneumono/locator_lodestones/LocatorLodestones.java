@@ -7,15 +7,16 @@ import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.component.type.LodestoneTrackerComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.*;
+import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class LocatorLodestones implements ClientModInitializer {
 	public static final String MOD_ID = "locator_lodestones";
@@ -45,29 +46,31 @@ public class LocatorLodestones implements ClientModInitializer {
 		}
 
 		for (ItemStack stack : stacks) {
-
-			getLodestonePosition(player, stack).ifPresent(lodestones::add);
-
-			BundleContentsComponent contentsComponent = stack.get(DataComponentTypes.BUNDLE_CONTENTS);
-			if (contentsComponent != null) {
-				contentsComponent.stream().forEach(
-						bundledStack -> getLodestonePosition(player, bundledStack).ifPresent(lodestones::add)
-				);
-			}
+			lodestones.addAll(getLodestonePositions(player.getWorld().getRegistryKey(), stack));
 		}
 
 		return lodestones;
 	}
 
-	private static Optional<BlockPos> getLodestonePosition(PlayerEntity player, ItemStack stack) {
+	private static List<BlockPos> getLodestonePositions(RegistryKey<World> dimension, ItemStack stack) {
+		List<BlockPos> lodestones = new ArrayList<>();
+
 		LodestoneTrackerComponent trackerComponent = stack.get(DataComponentTypes.LODESTONE_TRACKER);
 		if (trackerComponent != null && trackerComponent.target().isPresent()) {
 
 			GlobalPos pos = trackerComponent.target().get();
-			if (pos.dimension() == player.getWorld().getRegistryKey()) {
-				return Optional.ofNullable(pos.pos());
+			if (pos.dimension() == dimension && pos.pos() != null) {
+				lodestones.add(pos.pos());
 			}
 		}
-		return Optional.empty();
+
+		BundleContentsComponent contentsComponent = stack.get(DataComponentTypes.BUNDLE_CONTENTS);
+		if (contentsComponent != null) {
+			contentsComponent.stream().forEach(
+					bundledStack -> lodestones.addAll(getLodestonePositions(dimension, bundledStack))
+			);
+		}
+
+		return lodestones;
 	}
 }
