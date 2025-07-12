@@ -8,9 +8,16 @@
 		"Pneumono_"
 	],
 	"contact": {
-		"homepage": "https://github.com/PneumonoIsNotAvailable/LocatorLodestones",
+		"homepage": "https://modrinth.com/project/pMBcsVIg",
 		"sources": "https://github.com/PneumonoIsNotAvailable/LocatorLodestones",
 		"issues": "https://github.com/PneumonoIsNotAvailable/LocatorLodestones/issues"
+	},
+	"custom": {
+		"modmenu": {
+			"links": {
+				"modmenu.modrinth": "https://modrinth.com/project/pMBcsVIg"
+			}
+		}
 	},
 	"license": "MIT",
 	"icon": "assets/locator_lodestones/icon.png",
