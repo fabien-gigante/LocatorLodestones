@@ -12,6 +12,7 @@ import net.minecraft.world.waypoint.TrackedWaypoint;
 import net.minecraft.world.waypoint.Waypoint;
 import net.minecraft.world.waypoint.WaypointStyles;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -19,12 +20,12 @@ public class LodestoneBarRendering {
     private static final Identifier ARROW_UP = Identifier.ofVanilla("hud/locator_bar_arrow_up");
     private static final Identifier ARROW_DOWN = Identifier.ofVanilla("hud/locator_bar_arrow_down");
 
+    public static List<Lodestone> LODESTONES = new ArrayList<>();
+
     public static void renderLodestoneWaypoints(MinecraftClient client, DrawContext context, int centerY) {
         if (client.player == null || client.cameraEntity == null) return;
 
-        List<Lodestone> lodestones = LocatorLodestones.getLodestonePositions(client.player);
-
-        lodestones.stream()
+        LODESTONES.stream()
                 .sorted(Comparator.comparingDouble(
                         lodestone -> -lodestone.pos().squaredDistanceTo(client.cameraEntity.getPos())
                 ))

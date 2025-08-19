@@ -23,7 +23,7 @@ public abstract class InGameHudMixin {
             )
     )
     private boolean getCurrentBarType(ClientWaypointHandler instance, Operation<Boolean> original) {
-        if (client.player != null && !LocatorLodestones.getLodestonePositions(client.player).isEmpty()) {
+        if (client.player != null && !LocatorLodestones.updateLodestonePositions(client.player).isEmpty()) {
             return true;
         } else {
             return original.call(instance);

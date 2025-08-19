@@ -34,8 +34,8 @@ public class LocatorLodestones implements ClientModInitializer {
 		return Identifier.of(MOD_ID, path);
 	}
 
-	public static List<Lodestone> getLodestonePositions(PlayerEntity player) {
-		List<Lodestone> lodestones = new ArrayList<>();
+	public static List<Lodestone> updateLodestonePositions(PlayerEntity player) {
+		LodestoneBarRendering.LODESTONES.clear();
 
 		List<ItemStack> stacks = new ArrayList<>();
 		DefaultedList<ItemStack> mainStacks = player.getInventory().getMainStacks();
@@ -48,10 +48,10 @@ public class LocatorLodestones implements ClientModInitializer {
 		}
 
 		for (ItemStack stack : stacks) {
-			lodestones.addAll(getLodestonePositions(player.getWorld().getRegistryKey(), stack));
+			LodestoneBarRendering.LODESTONES.addAll(getLodestonePositions(player.getWorld().getRegistryKey(), stack));
 		}
 
-		return lodestones;
+		return LodestoneBarRendering.LODESTONES;
 	}
 
 	private static List<Lodestone> getLodestonePositions(RegistryKey<World> dimension, ItemStack stack) {
