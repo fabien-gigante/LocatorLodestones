@@ -26,7 +26,7 @@ public class LodestoneBarRendering {
 
         lodestones.stream()
                 .sorted(Comparator.comparingDouble(
-                        lodestone -> lodestone.pos().squaredDistanceTo(client.cameraEntity.getPos())
+                        lodestone -> -lodestone.pos().squaredDistanceTo(client.cameraEntity.getPos())
                 ))
                 .forEachOrdered(pos -> renderLodestoneWaypoint(client, context, centerY, pos));
     }
