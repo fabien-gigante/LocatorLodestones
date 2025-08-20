@@ -45,9 +45,7 @@ public class LodestoneBarRendering {
         Identifier identifier = waypointStyleAsset.getSpriteForDistance(
                 (float) Math.sqrt(lodestone.pos().squaredDistanceTo(client.cameraEntity.getPos()))
         );
-        int color = config.color.orElseGet(() -> ColorHelper.withBrightness(
-                ColorHelper.withAlpha(255, lodestone.getColor()), 0.9F
-        ));
+        int color = ColorHelper.withAlpha(255, lodestone.getColor());
 
         int x = MathHelper.ceil((context.getScaledWindowWidth() - 9) / 2.0F) + (int)(relativeYaw * 173.0 / 2.0 / 60.0);
         context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, identifier, x, centerY - 2, 9, 9, color);
