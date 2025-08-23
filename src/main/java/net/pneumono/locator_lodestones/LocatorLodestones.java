@@ -8,10 +8,12 @@ import net.minecraft.component.type.LodestoneTrackerComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +66,7 @@ public class LocatorLodestones implements ClientModInitializer {
 				lodestones.add(
 						new Lodestone(
 								new Vec3d(pos.pos().getX() + 0.5, pos.pos().getY(), pos.pos().getZ() + 0.5),
+								getText(stack),
 								getColor(stack)
 						)
 				);
@@ -86,5 +89,14 @@ public class LocatorLodestones implements ClientModInitializer {
 			color = ColorHandler.getColor(stack.get(DataComponentTypes.ITEM_NAME));
 		}
 		return color;
+	}
+
+	@Nullable
+	private static Text getText(ItemStack stack) {
+		Text text = stack.get(DataComponentTypes.CUSTOM_NAME);
+		if (text == null) {
+			text = stack.get(DataComponentTypes.ITEM_NAME);
+		}
+		return text;
 	}
 }

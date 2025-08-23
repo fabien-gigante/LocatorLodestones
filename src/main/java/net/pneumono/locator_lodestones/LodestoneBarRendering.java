@@ -1,10 +1,13 @@
 package net.pneumono.locator_lodestones;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.resource.waypoint.WaypointStyleAsset;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.text.Text;
+import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
@@ -30,6 +33,36 @@ public class LodestoneBarRendering {
                         lodestone -> -lodestone.pos().squaredDistanceTo(client.cameraEntity.getPos())
                 ))
                 .forEachOrdered(pos -> renderLodestoneWaypoint(client, context, centerY, pos));
+
+        if (!client.options.playerListKey.isPressed()) return;
+
+        Text bestText = null;
+        double bestYaw = 61;
+        for (Lodestone lodestone : LODESTONES) {
+            double yaw = getRelativeYaw(lodestone.pos(), client.gameRenderer.getCamera());
+            double absYaw = Math.abs(yaw);
+            if (absYaw < Math.abs(bestYaw)) {
+                bestYaw = yaw;
+                bestText = lodestone.text();
+            }
+        }
+
+        if (bestText != null) {
+            TextRenderer textRenderer = client.textRenderer;
+
+            int x = getXFromYaw(context, bestYaw) - textRenderer.getWidth(bestText) / 2;
+            int width = textRenderer.getWidth(bestText);
+
+            context.fill(x + 5 - 2, centerY - 10 - 2, x + width + 5 + 2, centerY - 10 + 9 + 2, ColorHelper.withAlpha(0.5F, Colors.BLACK));
+
+            context.drawTextWithShadow(
+                    textRenderer,
+                    bestText,
+                    x + 5,
+                    centerY - 10,
+                    Colors.WHITE
+            );
+        }
     }
 
     private static void renderLodestoneWaypoint(MinecraftClient client, DrawContext context, int centerY, Lodestone lodestone) {
@@ -47,7 +80,7 @@ public class LodestoneBarRendering {
         );
         int color = ColorHelper.withAlpha(255, lodestone.getColor());
 
-        int x = MathHelper.ceil((context.getScaledWindowWidth() - 9) / 2.0F) + (int)(relativeYaw * 173.0 / 2.0 / 60.0);
+        int x = getXFromYaw(context, relativeYaw);
         context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, identifier, x, centerY - 2, 9, 9, color);
 
         TrackedWaypoint.Pitch pitch = getPitch(lodestone.pos(), client.gameRenderer);
@@ -64,6 +97,10 @@ public class LodestoneBarRendering {
 
             context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, texture, x + 1, centerY + yOffset, 7, 5);
         }
+    }
+
+    private static int getXFromYaw(DrawContext context, double relativeYaw) {
+        return MathHelper.ceil((context.getScaledWindowWidth() - 9) / 2.0F) + (int)(relativeYaw * 173.0 / 2.0 / 60.0);
     }
 
     /**
