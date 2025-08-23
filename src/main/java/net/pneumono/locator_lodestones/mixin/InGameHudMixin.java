@@ -10,6 +10,8 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(InGameHud.class)
 public abstract class InGameHudMixin {
@@ -27,6 +29,20 @@ public abstract class InGameHudMixin {
             return true;
         } else {
             return original.call(instance);
+        }
+    }
+
+    @Inject(
+            method = "getCurrentBarType",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/network/ClientPlayerEntity;getJumpingMount()Lnet/minecraft/entity/JumpingMount;"
+            ),
+            cancellable = true
+    )
+    private void forceLocatorBarWhenPlayerListOpen(CallbackInfoReturnable<InGameHud.BarType> info) {
+        if (client.options.playerListKey.isPressed()) {
+            info.setReturnValue(InGameHud.BarType.LOCATOR);
         }
     }
 }
