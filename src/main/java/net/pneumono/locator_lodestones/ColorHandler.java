@@ -44,4 +44,9 @@ public class ColorHandler {
             return Optional.empty();
         }
     }
+
+    public static Text removeColorCode(Text text) {
+        if (text == null) return null;
+        return Text.literal(text.getString().replaceAll("( ?)([({<\\[]?)(#[0-9a-fA-F]{6})([)}>\\]]?)", ""));
+    }
 }

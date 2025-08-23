@@ -97,6 +97,6 @@ public class LocatorLodestones implements ClientModInitializer {
 		if (text == null) {
 			text = stack.get(DataComponentTypes.ITEM_NAME);
 		}
-		return text;
+		return ColorHandler.removeColorCode(text);
 	}
 }
