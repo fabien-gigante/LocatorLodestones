@@ -67,7 +67,7 @@ public class LocatorLodestones implements ClientModInitializer {
 						new Vec3d(pos.pos().getX() + 0.5, pos.pos().getY(), pos.pos().getZ() + 0.5),
 						getText(stack),
 						LocatorLodestones.id("death"),
-						Optional.of(0xbce0eb)
+						Optional.of(getColor(stack).orElse(0xBCE0EB))
 				));
 			}
 		}
