@@ -72,7 +72,7 @@ public class LodestoneBarRendering {
         if (relativeYaw <= -61.0 || relativeYaw > 60.0)  return;
 
         Waypoint.Config config = new Waypoint.Config();
-        config.style = RegistryKey.of(WaypointStyles.REGISTRY, LocatorLodestones.id("lodestone"));
+        config.style = RegistryKey.of(WaypointStyles.REGISTRY, lodestone.style());
 
         WaypointStyleAsset waypointStyleAsset = client.getWaypointStyleAssetManager().get(config.style);
         Identifier identifier = waypointStyleAsset.getSpriteForDistance(

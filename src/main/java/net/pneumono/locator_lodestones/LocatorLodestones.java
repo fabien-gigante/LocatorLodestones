@@ -7,6 +7,7 @@ import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.component.type.LodestoneTrackerComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -49,14 +50,27 @@ public class LocatorLodestones implements ClientModInitializer {
 		}
 
 		for (ItemStack stack : stacks) {
-			LodestoneBarRendering.LODESTONES.addAll(getLodestonePositions(player.getWorld().getRegistryKey(), stack));
+			LodestoneBarRendering.LODESTONES.addAll(getLodestonePositions(player, player.getWorld().getRegistryKey(), stack));
 		}
 
 		return LodestoneBarRendering.LODESTONES;
 	}
 
-	private static List<Lodestone> getLodestonePositions(RegistryKey<World> dimension, ItemStack stack) {
+	private static List<Lodestone> getLodestonePositions(PlayerEntity player, RegistryKey<World> dimension, ItemStack stack) {
 		List<Lodestone> lodestones = new ArrayList<>();
+
+		Optional<GlobalPos> lastDeathPos = player.getLastDeathPos();
+		if (lastDeathPos.isPresent() && stack.isOf(Items.RECOVERY_COMPASS)) {
+			GlobalPos pos = lastDeathPos.get();
+			if (pos.dimension() == dimension && pos.pos() != null) {
+				lodestones.add(new Lodestone(
+						new Vec3d(pos.pos().getX() + 0.5, pos.pos().getY(), pos.pos().getZ() + 0.5),
+						getText(stack),
+						LocatorLodestones.id("death"),
+						Optional.of(0xbce0eb)
+				));
+			}
+		}
 
 		LodestoneTrackerComponent trackerComponent = stack.get(DataComponentTypes.LODESTONE_TRACKER);
 		if (trackerComponent != null && trackerComponent.target().isPresent()) {
@@ -67,6 +81,7 @@ public class LocatorLodestones implements ClientModInitializer {
 						new Lodestone(
 								new Vec3d(pos.pos().getX() + 0.5, pos.pos().getY(), pos.pos().getZ() + 0.5),
 								getText(stack),
+								LocatorLodestones.id("lodestone"),
 								getColor(stack)
 						)
 				);
@@ -76,7 +91,7 @@ public class LocatorLodestones implements ClientModInitializer {
 		BundleContentsComponent contentsComponent = stack.get(DataComponentTypes.BUNDLE_CONTENTS);
 		if (contentsComponent != null) {
 			contentsComponent.stream().forEach(
-					bundledStack -> lodestones.addAll(getLodestonePositions(dimension, bundledStack))
+					bundledStack -> lodestones.addAll(getLodestonePositions(player, dimension, bundledStack))
 			);
 		}
 
