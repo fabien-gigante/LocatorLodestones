@@ -12,52 +12,49 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import net.minecraft.world.waypoint.TrackedWaypoint;
-import net.minecraft.world.waypoint.Waypoint;
 import net.minecraft.world.waypoint.WaypointStyles;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
+import java.util.Optional;
 
-public class LodestoneBarRendering {
+public class WaypointRendering {
     private static final Identifier ARROW_UP = Identifier.ofVanilla("hud/locator_bar_arrow_up");
     private static final Identifier ARROW_DOWN = Identifier.ofVanilla("hud/locator_bar_arrow_down");
 
-    public static List<Lodestone> LODESTONES = new ArrayList<>();
-
-    public static void renderLodestoneWaypoints(MinecraftClient client, DrawContext context, int centerY) {
+    public static void renderWaypoints(MinecraftClient client, DrawContext context, int centerY) {
         if (client.player == null || client.cameraEntity == null) return;
 
-        LODESTONES.stream()
+        WaypointTracking.WAYPOINTS.stream()
                 .sorted(Comparator.comparingDouble(
-                        lodestone -> -lodestone.pos().squaredDistanceTo(client.cameraEntity.getPos())
+                        waypoint -> -waypoint.pos().squaredDistanceTo(client.cameraEntity.getPos())
                 ))
-                .forEachOrdered(pos -> renderLodestoneWaypoint(client, context, centerY, pos));
+                .forEachOrdered(pos -> renderWaypoint(client, context, centerY, pos));
 
         if (!client.options.playerListKey.isPressed()) return;
 
-        Text bestText = null;
+        Optional<Text> bestText = Optional.empty();
         double bestYaw = 61;
-        for (Lodestone lodestone : LODESTONES) {
-            double yaw = getRelativeYaw(lodestone.pos(), client.gameRenderer.getCamera());
+        for (ClientWaypoint waypoint : WaypointTracking.WAYPOINTS) {
+            double yaw = getRelativeYaw(waypoint.pos(), client.gameRenderer.getCamera());
             double absYaw = Math.abs(yaw);
             if (absYaw < Math.abs(bestYaw)) {
                 bestYaw = yaw;
-                bestText = lodestone.text();
+                bestText = waypoint.text();
             }
         }
 
-        if (bestText != null) {
+        if (bestText.isPresent()) {
+            Text text = bestText.get();
             TextRenderer textRenderer = client.textRenderer;
 
-            int x = getXFromYaw(context, bestYaw) - textRenderer.getWidth(bestText) / 2;
-            int width = textRenderer.getWidth(bestText);
+            int x = getXFromYaw(context, bestYaw) - textRenderer.getWidth(text) / 2;
+            int width = textRenderer.getWidth(text);
 
             context.fill(x + 5 - 2, centerY - 10 - 2, x + width + 5 + 2, centerY - 10 + 9 + 2, ColorHelper.withAlpha(0.5F, Colors.BLACK));
 
             context.drawTextWithShadow(
                     textRenderer,
-                    bestText,
+                    text,
                     x + 5,
                     centerY - 10,
                     Colors.WHITE
@@ -65,25 +62,25 @@ public class LodestoneBarRendering {
         }
     }
 
-    private static void renderLodestoneWaypoint(MinecraftClient client, DrawContext context, int centerY, Lodestone lodestone) {
+    private static void renderWaypoint(MinecraftClient client, DrawContext context, int centerY, ClientWaypoint waypoint) {
         if (client.player == null || client.cameraEntity == null) return;
 
-        double relativeYaw = getRelativeYaw(lodestone.pos(), client.gameRenderer.getCamera());
+        double relativeYaw = getRelativeYaw(waypoint.pos(), client.gameRenderer.getCamera());
         if (relativeYaw <= -61.0 || relativeYaw > 60.0)  return;
 
-        Waypoint.Config config = new Waypoint.Config();
-        config.style = RegistryKey.of(WaypointStyles.REGISTRY, lodestone.style());
-
-        WaypointStyleAsset waypointStyleAsset = client.getWaypointStyleAssetManager().get(config.style);
-        Identifier identifier = waypointStyleAsset.getSpriteForDistance(
-                (float) Math.sqrt(lodestone.pos().squaredDistanceTo(client.cameraEntity.getPos()))
+        WaypointStyleAsset waypointStyleAsset = client.getWaypointStyleAssetManager().get(
+                RegistryKey.of(WaypointStyles.REGISTRY, waypoint.style())
         );
-        int color = ColorHelper.withAlpha(255, lodestone.getColor());
+        Identifier identifier = waypointStyleAsset.getSpriteForDistance(
+                (float) Math.sqrt(waypoint.pos().squaredDistanceTo(client.cameraEntity.getPos()))
+        );
+
+        int color = ColorHelper.withAlpha(255, waypoint.getColor());
 
         int x = getXFromYaw(context, relativeYaw);
         context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, identifier, x, centerY - 2, 9, 9, color);
 
-        TrackedWaypoint.Pitch pitch = getPitch(lodestone.pos(), client.gameRenderer);
+        TrackedWaypoint.Pitch pitch = getPitch(waypoint.pos(), client.gameRenderer);
         if (pitch != TrackedWaypoint.Pitch.NONE) {
             int yOffset;
             Identifier texture;

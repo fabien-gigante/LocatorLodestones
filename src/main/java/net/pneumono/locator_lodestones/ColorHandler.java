@@ -1,14 +1,23 @@
 package net.pneumono.locator_lodestones;
 
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ColorHandler {
+    public static Optional<Integer> getColor(ItemStack stack) {
+        Optional<Integer> color = getColor(stack.get(DataComponentTypes.CUSTOM_NAME));
+        if (color.isEmpty()) {
+            color = getColor(stack.get(DataComponentTypes.ITEM_NAME));
+        }
+        return color;
+    }
+
     public static Optional<Integer> getColor(Text text) {
         if (text == null) {
             return Optional.empty();
@@ -24,19 +33,17 @@ public class ColorHandler {
 
         Matcher matcher = Pattern.compile("#[0-9a-fA-F]{6}").matcher(text);
 
-        List<String> strings = new ArrayList<>();
-        while (matcher.find()) {
-            strings.add(matcher.group());
+        String string = null;
+        if (matcher.find()) {
+            string = matcher.group();
         }
 
-        if (strings.isEmpty()) {
-            return Optional.empty();
-        } else {
-            return parseCode(strings.getFirst());
-        }
+        return parseCode(string);
     }
 
-    public static Optional<Integer> parseCode(String string) {
+    public static Optional<Integer> parseCode(@Nullable String string) {
+        if (string == null) return Optional.empty();
+
         try {
             return Optional.of(Integer.parseInt(string, 1, 7, 16));
         } catch (NullPointerException | IndexOutOfBoundsException | NumberFormatException e) {
@@ -45,8 +52,11 @@ public class ColorHandler {
         }
     }
 
-    public static Text removeColorCode(Text text) {
-        if (text == null) return null;
-        return Text.literal(text.getString().replaceAll("( ?)([({<\\[]?)(#[0-9a-fA-F]{6})([)}>\\]]?)", ""));
+    public static Optional<Text> removeColorCode(Text text) {
+        if (text == null) return Optional.empty();
+
+        return Optional.of(Text.literal(
+                text.getString().replaceAll("( ?)([({<\\[]?)(#[0-9a-fA-F]{6})([)}>\\]]?)", "")
+        ));
     }
 }

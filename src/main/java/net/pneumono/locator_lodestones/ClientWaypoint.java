@@ -6,7 +6,7 @@ import net.minecraft.util.math.Vec3d;
 
 import java.util.Optional;
 
-public record Lodestone(Vec3d pos, Text text, Identifier style, Optional<Integer> color) {
+public record ClientWaypoint(Vec3d pos, Optional<Text> text, Identifier style, Optional<Integer> color) {
     public int getColor() {
         if (color().isPresent()) {
             return color().get();
