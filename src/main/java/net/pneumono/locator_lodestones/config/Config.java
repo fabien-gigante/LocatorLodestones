@@ -18,13 +18,13 @@ public class Config {
     public ColorProvider recoveryColor;
 
     public static final Codec<Config> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.BOOL.fieldOf("tab_forces_locator_bar").forGetter(Config::tabForcesLocatorBar),
-            Codec.BOOL.fieldOf("tab_shows_names").forGetter(Config::tabShowsNames),
-            Codec.BOOL.fieldOf("show_recovery_compasses").forGetter(Config::shouldShowRecovery),
-            Codec.BOOL.fieldOf("show_bundled_compasses").forGetter(Config::shouldShowBundled),
-            Codec.BOOL.fieldOf("color_customization").forGetter(Config::colorCustomization),
-            ColorProvider.CODEC.fieldOf("lodestone_color").forGetter(Config::getLodestoneColor),
-            ColorProvider.CODEC.fieldOf("recovery_color").forGetter(Config::getRecoveryColor)
+            Codec.BOOL.optionalFieldOf("tab_forces_locator_bar", DEFAULT.tabForcesLocatorBar()).forGetter(Config::tabForcesLocatorBar),
+            Codec.BOOL.optionalFieldOf("tab_shows_names", DEFAULT.tabShowsNames()).forGetter(Config::tabShowsNames),
+            Codec.BOOL.optionalFieldOf("show_recovery_compasses", DEFAULT.shouldShowRecovery()).forGetter(Config::shouldShowRecovery),
+            Codec.BOOL.optionalFieldOf("show_bundled_compasses", DEFAULT.shouldShowBundled()).forGetter(Config::shouldShowBundled),
+            Codec.BOOL.optionalFieldOf("color_customization", DEFAULT.colorCustomization()).forGetter(Config::colorCustomization),
+            ColorProvider.CODEC.optionalFieldOf("lodestone_color", DEFAULT.getLodestoneColor()).forGetter(Config::getLodestoneColor),
+            ColorProvider.CODEC.optionalFieldOf("recovery_color", DEFAULT.getRecoveryColor()).forGetter(Config::getRecoveryColor)
     ).apply(instance, Config::new));
 
     public Config(
