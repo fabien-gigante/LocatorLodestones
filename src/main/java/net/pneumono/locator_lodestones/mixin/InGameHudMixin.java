@@ -6,6 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.world.ClientWaypointHandler;
 import net.pneumono.locator_lodestones.WaypointTracking;
+import net.pneumono.locator_lodestones.config.ConfigManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -41,7 +42,7 @@ public abstract class InGameHudMixin {
             cancellable = true
     )
     private void forceLocatorBarWhenPlayerListOpen(CallbackInfoReturnable<InGameHud.BarType> info) {
-        if (client.options.playerListKey.isPressed()) {
+        if (ConfigManager.tabForcesLocatorBar() && client.options.playerListKey.isPressed()) {
             info.setReturnValue(InGameHud.BarType.LOCATOR);
         }
     }

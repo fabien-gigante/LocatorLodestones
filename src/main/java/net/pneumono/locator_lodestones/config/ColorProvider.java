@@ -4,8 +4,6 @@ import com.mojang.serialization.Codec;
 import net.pneumono.locator_lodestones.LocatorLodestones;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
-
 public class ColorProvider {
     public static final Codec<ColorProvider> CODEC = Codec.STRING.xmap(ColorProvider::validate, ColorProvider::asString);
 
@@ -26,8 +24,8 @@ public class ColorProvider {
         }
     }
 
-    public Optional<Integer> getColor() {
-        return Optional.ofNullable(this.color);
+    public @Nullable Integer getColor() {
+        return this.color;
     }
 
     public String asString() {

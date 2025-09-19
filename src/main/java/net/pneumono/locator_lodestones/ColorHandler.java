@@ -3,6 +3,7 @@ package net.pneumono.locator_lodestones;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import net.pneumono.locator_lodestones.config.ConfigManager;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -11,6 +12,8 @@ import java.util.regex.Pattern;
 
 public class ColorHandler {
     public static Optional<Integer> getColor(ItemStack stack) {
+        if (!ConfigManager.colorCustomization()) return Optional.empty();
+
         Optional<Integer> color = getColor(stack.get(DataComponentTypes.CUSTOM_NAME));
         if (color.isEmpty()) {
             color = getColor(stack.get(DataComponentTypes.ITEM_NAME));

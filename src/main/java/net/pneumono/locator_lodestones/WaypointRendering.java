@@ -13,6 +13,7 @@ import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import net.minecraft.world.waypoint.TrackedWaypoint;
 import net.minecraft.world.waypoint.WaypointStyles;
+import net.pneumono.locator_lodestones.config.ConfigManager;
 
 import java.util.Comparator;
 import java.util.Optional;
@@ -30,7 +31,7 @@ public class WaypointRendering {
                 ))
                 .forEachOrdered(pos -> renderWaypoint(client, context, centerY, pos));
 
-        if (!client.options.playerListKey.isPressed()) return;
+        if (!ConfigManager.tabShowsNames() || !client.options.playerListKey.isPressed()) return;
 
         Optional<Text> bestText = Optional.empty();
         double bestYaw = 61;

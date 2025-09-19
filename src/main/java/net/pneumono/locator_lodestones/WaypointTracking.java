@@ -12,6 +12,7 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.pneumono.locator_lodestones.config.ConfigManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,16 +44,20 @@ public class WaypointTracking {
     private static List<ClientWaypoint> getWaypointsFromStack(PlayerEntity player, RegistryKey<World> dimension, ItemStack stack) {
         List<ClientWaypoint> waypoints = new ArrayList<>();
 
-        Optional<GlobalPos> lastDeathPos = player.getLastDeathPos();
-        if (lastDeathPos.isPresent() && stack.isOf(Items.RECOVERY_COMPASS)) {
-            GlobalPos pos = lastDeathPos.get();
-            if (pos.dimension() == dimension && pos.pos() != null) {
-                waypoints.add(new ClientWaypoint(
-                        Vec3d.ofCenter(pos.pos()),
-                        getText(stack),
-                        LocatorLodestones.id("death"),
-                        Optional.of(ColorHandler.getColor(stack).orElse(0xBCE0EB))
-                ));
+        if (ConfigManager.shouldShowRecovery()) {
+            Optional<GlobalPos> lastDeathPos = player.getLastDeathPos();
+            if (lastDeathPos.isPresent() && stack.isOf(Items.RECOVERY_COMPASS)) {
+                GlobalPos pos = lastDeathPos.get();
+                if (pos.dimension() == dimension && pos.pos() != null) {
+                    waypoints.add(new ClientWaypoint(
+                            Vec3d.ofCenter(pos.pos()),
+                            getText(stack),
+                            LocatorLodestones.id("death"),
+                            Optional.ofNullable(
+                                    ColorHandler.getColor(stack).orElse(ConfigManager.getRecoveryColor().getColor())
+                            )
+                    ));
+                }
             }
         }
 
@@ -65,16 +70,20 @@ public class WaypointTracking {
                         Vec3d.ofCenter(pos.pos()),
                         getText(stack),
                         LocatorLodestones.id("lodestone"),
-                        ColorHandler.getColor(stack)
+                        Optional.ofNullable(
+                                ColorHandler.getColor(stack).orElse(ConfigManager.getLodestoneColor().getColor())
+                        )
                 ));
             }
         }
 
-        BundleContentsComponent contentsComponent = stack.get(DataComponentTypes.BUNDLE_CONTENTS);
-        if (contentsComponent != null) {
-            contentsComponent.stream().forEach(
-                    bundledStack -> waypoints.addAll(getWaypointsFromStack(player, dimension, bundledStack))
-            );
+        if (ConfigManager.shouldShowBundled()) {
+            BundleContentsComponent contentsComponent = stack.get(DataComponentTypes.BUNDLE_CONTENTS);
+            if (contentsComponent != null) {
+                contentsComponent.stream().forEach(
+                        bundledStack -> waypoints.addAll(getWaypointsFromStack(player, dimension, bundledStack))
+                );
+            }
         }
 
         return waypoints;
