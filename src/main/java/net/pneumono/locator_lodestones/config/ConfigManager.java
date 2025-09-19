@@ -94,6 +94,10 @@ public class ConfigManager {
         return CONFIG.shouldShowBundled();
     }
 
+    public static boolean shouldShowInSpectator() {
+        return CONFIG.shouldShowInSpectator();
+    }
+
     public static boolean colorCustomization() {
         return CONFIG.colorCustomization();
     }

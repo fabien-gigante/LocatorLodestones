@@ -6,13 +6,14 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 public class Config {
     public static final Config DEFAULT = new Config(
             true, true, true, true, true,
-            new ColorProvider(null), new ColorProvider(0xBCE0EB)
+            true, new ColorProvider(null), new ColorProvider(0xBCE0EB)
     );
 
     public boolean tabForcesLocatorBar;
     public boolean tabShowsNames;
     public boolean showRecovery;
     public boolean showBundled;
+    public boolean showInSpectator;
     public boolean colorCustomization;
     public ColorProvider lodestoneColor;
     public ColorProvider recoveryColor;
@@ -22,6 +23,7 @@ public class Config {
             Codec.BOOL.optionalFieldOf("tab_shows_names", DEFAULT.tabShowsNames()).forGetter(Config::tabShowsNames),
             Codec.BOOL.optionalFieldOf("show_recovery_compasses", DEFAULT.shouldShowRecovery()).forGetter(Config::shouldShowRecovery),
             Codec.BOOL.optionalFieldOf("show_bundled_compasses", DEFAULT.shouldShowBundled()).forGetter(Config::shouldShowBundled),
+            Codec.BOOL.optionalFieldOf("show_in_spectator", DEFAULT.shouldShowInSpectator()).forGetter(Config::shouldShowInSpectator),
             Codec.BOOL.optionalFieldOf("color_customization", DEFAULT.colorCustomization()).forGetter(Config::colorCustomization),
             ColorProvider.CODEC.optionalFieldOf("lodestone_color", DEFAULT.getLodestoneColor()).forGetter(Config::getLodestoneColor),
             ColorProvider.CODEC.optionalFieldOf("recovery_color", DEFAULT.getRecoveryColor()).forGetter(Config::getRecoveryColor)
@@ -29,12 +31,14 @@ public class Config {
 
     public Config(
             boolean tabForcesLocatorBar, boolean tabShowsNames, boolean showRecovery, boolean showBundled,
-            boolean colorCustomization, ColorProvider lodestoneColor, ColorProvider recoveryColor
+            boolean showInSpectator, boolean colorCustomization, ColorProvider lodestoneColor,
+            ColorProvider recoveryColor
     ) {
         this.tabForcesLocatorBar = tabForcesLocatorBar;
         this.tabShowsNames = tabShowsNames;
         this.showRecovery = showRecovery;
         this.showBundled = showBundled;
+        this.showInSpectator = showInSpectator;
         this.colorCustomization = colorCustomization;
         this.lodestoneColor = lodestoneColor;
         this.recoveryColor = recoveryColor;
@@ -54,6 +58,10 @@ public class Config {
 
     public boolean shouldShowBundled() {
         return showBundled;
+    }
+
+    public boolean shouldShowInSpectator() {
+        return showInSpectator;
     }
 
     public boolean colorCustomization() {

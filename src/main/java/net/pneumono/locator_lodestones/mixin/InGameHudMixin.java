@@ -26,7 +26,11 @@ public abstract class InGameHudMixin {
             )
     )
     private boolean getCurrentBarType(ClientWaypointHandler instance, Operation<Boolean> original) {
-        if (client.player != null && !WaypointTracking.updateWaypoints(client.player).isEmpty()) {
+        if (
+                client.player != null &&
+                !WaypointTracking.updateWaypoints(client.player).isEmpty() &&
+                (ConfigManager.shouldShowInSpectator() || !client.player.isSpectator())
+        ) {
             return true;
         } else {
             return original.call(instance);
