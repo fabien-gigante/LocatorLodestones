@@ -49,6 +49,8 @@ public class ConfigManager {
             DataResult<Pair<Config, JsonElement>> result = Config.CODEC.decode(JsonOps.INSTANCE, element);
             if (result.isSuccess()) {
                 CONFIG = result.getOrThrow().getFirst();
+            } else {
+                CONFIG = Config.DEFAULT;
             }
 
         } else {
@@ -58,6 +60,7 @@ public class ConfigManager {
             } else {
                 LocatorLodestones.LOGGER.error("Could not create default config object!");
             }
+            CONFIG = Config.DEFAULT;
         }
     }
 
