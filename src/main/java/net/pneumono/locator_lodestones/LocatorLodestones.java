@@ -3,6 +3,7 @@ package net.pneumono.locator_lodestones;
 import net.fabricmc.api.ClientModInitializer;
 
 import net.minecraft.util.Identifier;
+import net.pneumono.locator_lodestones.config.ConfigManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,7 @@ public class LocatorLodestones implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		LOGGER.info("Initializing Locator Lodestones");
+		ConfigManager.initConfig();
 	}
 
 	public static Identifier id(String path) {
