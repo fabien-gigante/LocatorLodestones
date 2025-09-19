@@ -54,7 +54,7 @@ public class WaypointTracking {
                             getText(stack),
                             LocatorLodestones.id("death"),
                             Optional.ofNullable(
-                                    ColorHandler.getColor(stack).orElse(ConfigManager.getRecoveryColor().getColor())
+                                    ColorHandler.getColor(stack).orElse(ConfigManager.getRecoveryColor().color())
                             )
                     ));
                 }
@@ -71,7 +71,7 @@ public class WaypointTracking {
                         getText(stack),
                         LocatorLodestones.id("lodestone"),
                         Optional.ofNullable(
-                                ColorHandler.getColor(stack).orElse(ConfigManager.getLodestoneColor().getColor())
+                                ColorHandler.getColor(stack).orElse(ConfigManager.getLodestoneColor().color())
                         )
                 ));
             }
