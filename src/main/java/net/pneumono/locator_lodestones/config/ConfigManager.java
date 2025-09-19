@@ -9,7 +9,6 @@ import com.mojang.serialization.JsonOps;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.text.Text;
 import net.pneumono.locator_lodestones.LocatorLodestones;
 
 import java.io.IOException;
@@ -25,17 +24,7 @@ public class ConfigManager {
     public static void initConfig() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(
                 ClientCommandManager.literal(LocatorLodestones.id("reloadconfig").toString()).executes(context -> {
-                    if (shouldShowBundled()) {
-                        context.getSource().sendFeedback(Text.literal("yippee 1"));
-                    } else {
-                        context.getSource().sendFeedback(Text.literal("woohoo 1"));
-                    }
                     reloadConfig();
-                    if (shouldShowBundled()) {
-                        context.getSource().sendFeedback(Text.literal("yippee 2"));
-                    } else {
-                        context.getSource().sendFeedback(Text.literal("woohoo 2"));
-                    }
                     return 1;
                 })
         ));
