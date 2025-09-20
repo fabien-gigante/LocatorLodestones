@@ -38,19 +38,16 @@ public class ConfigManager {
             DataResult<Pair<Config, JsonElement>> result = Config.CODEC.decode(JsonOps.INSTANCE, element);
             if (result.isSuccess()) {
                 CONFIG = result.getOrThrow().getFirst();
-            } else {
-                CONFIG = Config.DEFAULT;
             }
-
-        } else {
-            DataResult<JsonElement> result = Config.CODEC.encodeStart(JsonOps.INSTANCE, Config.DEFAULT);
-            if (result.isSuccess()) {
-                writeObject(result.getOrThrow());
-            } else {
-                LocatorLodestones.LOGGER.error("Could not create default config object!");
-            }
-            CONFIG = Config.DEFAULT;
         }
+
+        DataResult<JsonElement> result = Config.CODEC.encodeStart(JsonOps.INSTANCE, CONFIG);
+        if (result.isSuccess()) {
+            writeObject(result.getOrThrow());
+        } else {
+            LocatorLodestones.LOGGER.error("Could not create default config object!");
+        }
+        CONFIG = Config.DEFAULT;
     }
 
     private static JsonElement readFromFile() {
