@@ -53,11 +53,8 @@ public class ConfigManager {
     }
 
     private static JsonElement readFromFile() {
-        try {
-            Reader reader = Files.newBufferedReader(CONFIG_FILE);
-            JsonElement element = new GsonBuilder().setPrettyPrinting().create().fromJson(reader, JsonElement.class);
-            reader.close();
-            return element;
+        try (Reader reader = Files.newBufferedReader(CONFIG_FILE)) {
+            return new GsonBuilder().setPrettyPrinting().create().fromJson(reader, JsonElement.class);
         } catch (IOException e) {
             LocatorLodestones.LOGGER.error("Could not read config file. Default values will be used instead", e);
             return null;
