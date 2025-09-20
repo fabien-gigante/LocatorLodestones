@@ -1,5 +1,6 @@
 {
     "modmenu.nameTranslation.locator_lodestones": "Locator Lodestones",
     "modmenu.summaryTranslation.locator_lodestones": "Adds Lodestones to the Player Locator Bar.",
-    "modmenu.descriptionTranslation.locator_lodestones": "Adds Lodestones to the Player Locator Bar.\n\nLodestone Compasses in your Inventory (including in Bundles) add Waypoints to your Locator Bar."
+    "modmenu.descriptionTranslation.locator_lodestones": "Adds Lodestones to the Player Locator Bar.\n\nLodestone Compasses in your Inventory (including in Bundles) add Waypoints to your Locator Bar.",
+    "locator_lodestones.reload": "Reloaded configs"
 }

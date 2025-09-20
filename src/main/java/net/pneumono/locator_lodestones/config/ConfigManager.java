@@ -9,6 +9,7 @@ import com.mojang.serialization.JsonOps;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.text.Text;
 import net.pneumono.locator_lodestones.LocatorLodestones;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ public class ConfigManager {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(
                 ClientCommandManager.literal(LocatorLodestones.id("reloadconfig").toString()).executes(context -> {
                     reloadConfig();
+                    context.getSource().sendFeedback(Text.translatable("locator_lodestones.reload"));
                     return 1;
                 })
         ));
