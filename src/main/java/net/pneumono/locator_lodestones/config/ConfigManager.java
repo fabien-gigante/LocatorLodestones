@@ -35,24 +35,23 @@ public class ConfigManager {
     }
 
     public static void reloadConfig() {
-        if (CONFIG_FILE.toFile().exists()) {
-            JsonElement element = readFromFile();
-            DataResult<Pair<Config, JsonElement>> result = Config.CODEC.decode(JsonOps.INSTANCE, element);
-            if (result.isSuccess()) {
-                CONFIG = result.getOrThrow().getFirst();
-            }
-        }
+        CONFIG = readConfigFromFile();
 
-        DataResult<JsonElement> result = Config.CODEC.encodeStart(JsonOps.INSTANCE, CONFIG);
-        if (result.isSuccess()) {
-            writeObject(result.getOrThrow());
-        } else {
-            LocatorLodestones.LOGGER.error("Could not create default config object!");
-        }
-        CONFIG = Config.DEFAULT;
+        writeConfigToFile(CONFIG);
     }
 
-    private static JsonElement readFromFile() {
+    public static Config readConfigFromFile() {
+        if (CONFIG_FILE.toFile().exists()) {
+            JsonElement element = readObjectFromFile();
+            DataResult<Pair<Config, JsonElement>> result = Config.CODEC.decode(JsonOps.INSTANCE, element);
+            if (result.isSuccess()) {
+                return result.getOrThrow().getFirst();
+            }
+        }
+        return Config.DEFAULT;
+    }
+
+    public static JsonElement readObjectFromFile() {
         try (Reader reader = Files.newBufferedReader(CONFIG_FILE)) {
             return new GsonBuilder().setPrettyPrinting().create().fromJson(reader, JsonElement.class);
         } catch (IOException e) {
@@ -64,7 +63,16 @@ public class ConfigManager {
         }
     }
 
-    private static void writeObject(JsonElement element) {
+    public static void writeConfigToFile(Config config) {
+        DataResult<JsonElement> result = Config.CODEC.encodeStart(JsonOps.INSTANCE, config);
+        if (result.isSuccess()) {
+            writeObjectToFile(result.getOrThrow());
+        } else {
+            LocatorLodestones.LOGGER.error("Could not create default config object!");
+        }
+    }
+
+    public static void writeObjectToFile(JsonElement element) {
         try {
             Writer writer = Files.newBufferedWriter(CONFIG_FILE);
             new GsonBuilder().setPrettyPrinting().create().toJson(element, writer);
