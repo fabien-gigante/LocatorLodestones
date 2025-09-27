@@ -11,6 +11,7 @@
     },
     "client": [
         "InGameHudMixin",
-        "LocatorBarMixin"
+        "LocatorBarMixin",
+        "PlayerInventoryMixin"
     ]
 }

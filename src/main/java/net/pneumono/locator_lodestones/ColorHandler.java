@@ -3,6 +3,7 @@ package net.pneumono.locator_lodestones;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.ColorHelper;
 import net.pneumono.locator_lodestones.config.ConfigManager;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,7 +49,7 @@ public class ColorHandler {
         if (string == null) return Optional.empty();
 
         try {
-            return Optional.of(Integer.parseInt(string, 1, 7, 16));
+            return Optional.of(ColorHelper.withAlpha(255, Integer.parseInt(string, 1, 7, 16)));
         } catch (NullPointerException | IndexOutOfBoundsException | NumberFormatException e) {
             LocatorLodestones.LOGGER.error("String '{}' is not a valid color code!", string, e);
             return Optional.empty();
