@@ -3,23 +3,40 @@ package net.pneumono.locator_lodestones;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
+import net.minecraft.world.waypoint.EntityTickProgress;
 import net.minecraft.world.waypoint.TrackedWaypoint;
 import net.pneumono.locator_lodestones.config.ConfigManager;
 
 import java.util.Optional;
 
 public class WaypointNameRendering {
-    public static void renderNames(MinecraftClient client, DrawContext context, int centerY) {
+    public static void renderNames(MinecraftClient client, DrawContext context, RenderTickCounter tickCounter, int centerY) {
         if (!ConfigManager.tabShowsNames() || !client.options.playerListKey.isPressed()) return;
+
+        //? if >=1.21.9 {
+        Entity cameraEntity = client.getCameraEntity();
+        if (cameraEntity == null) return;
+        World world = cameraEntity.getEntityWorld();
+        EntityTickProgress entityTickProgress = (tickedEntity) -> tickCounter.getTickProgress(
+                !world.getTickManager().shouldSkipTick(tickedEntity)
+        );
+        //?}
 
         TrackedWaypoint bestWaypoint = null;
         double bestYaw = 61;
         for (TrackedWaypoint waypoint : WaypointTracking.CURRENT_WAYPOINTS) {
-            double yaw = waypoint.getRelativeYaw(client.world, client.gameRenderer.getCamera());
+            //? if >=1.21.9 {
+            double yaw = waypoint.getRelativeYaw(client.world, client.gameRenderer.getCamera(), entityTickProgress);
+            //?} else {
+            /*double yaw = waypoint.getRelativeYaw(client.world, client.gameRenderer.getCamera());
+            *///?}
             double absYaw = Math.abs(yaw);
             if (absYaw < Math.abs(bestYaw)) {
                 bestYaw = yaw;

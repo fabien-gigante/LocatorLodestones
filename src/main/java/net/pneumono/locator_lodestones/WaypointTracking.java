@@ -83,7 +83,12 @@ public class WaypointTracking {
 
         List<TrackedWaypoint> waypoints = new ArrayList<>();
         for (ItemStack stack : stacks) {
-            waypoints.addAll(getWaypointsFromStack(player, player.getWorld().getRegistryKey(), stack));
+            //? if >=1.21.9 {
+            RegistryKey<World> dimension = player.getEntityWorld().getRegistryKey();
+            //?} else {
+            /*RegistryKey<World> dimension = player.getWorld().getRegistryKey();
+            *///?}
+            waypoints.addAll(getWaypointsFromStack(player, dimension, stack));
         }
         return waypoints;
     }

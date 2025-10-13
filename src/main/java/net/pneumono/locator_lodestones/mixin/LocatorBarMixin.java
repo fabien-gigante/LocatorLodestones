@@ -24,6 +24,6 @@ public abstract class LocatorBarMixin implements Bar {
             at = @At("RETURN")
     )
     private void renderClientWaypoints(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-        WaypointNameRendering.renderNames(this.client, context, this.getCenterY(this.client.getWindow()));
+        WaypointNameRendering.renderNames(this.client, context, tickCounter, this.getCenterY(this.client.getWindow()));
     }
 }
