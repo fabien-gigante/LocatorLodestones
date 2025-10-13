@@ -4,17 +4,20 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
-import net.minecraft.world.waypoint.EntityTickProgress;
 import net.minecraft.world.waypoint.TrackedWaypoint;
 import net.pneumono.locator_lodestones.config.ConfigManager;
 
 import java.util.Optional;
+
+//? if >=1.21.9 {
+import net.minecraft.entity.Entity;
+import net.minecraft.world.World;
+import net.minecraft.world.waypoint.EntityTickProgress;
+//?}
 
 public class WaypointNameRendering {
     public static void renderNames(MinecraftClient client, DrawContext context, RenderTickCounter tickCounter, int centerY) {
