@@ -6,22 +6,21 @@ plugins {
 java.sourceCompatibility = JavaVersion.VERSION_21
 java.targetCompatibility = JavaVersion.VERSION_21
 
-version = "${project.property("mod_version")}"
-
-base.archivesName.set(project.property("archives_base_name") as String)
+base.archivesName = "${property("mod_id")}"
+version = "${property("mod_version")}+${stonecutter.current.project}+${property("mod_subversion")}"
 
 repositories {
 
 }
 
 loom {
-	accessWidenerPath = file("src/main/resources/locator_lodestones.accesswidener")
+	accessWidenerPath = rootProject.file("src/main/resources/locator_lodestones.accesswidener")
 }
 
 dependencies {
-	minecraft("com.mojang:minecraft:${property("minecraft_version")}")
+	minecraft("com.mojang:minecraft:${stonecutter.current.version}")
 	mappings("net.fabricmc:yarn:${property("yarn_mappings")}:v2")
-	modImplementation("net.fabricmc:fabric-loader:${property("loader_version")}")
+	modImplementation("net.fabricmc:fabric-loader:0.17.3")
 
 	// Fabric API
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_version")}")
@@ -29,12 +28,16 @@ dependencies {
 
 tasks {
 	processResources {
-		inputs.property("version", project.property("mod_version"))
+		inputs.property("version", stonecutter.current.version)
+		inputs.property("min_supported", project.property("min_supported_version"))
+		inputs.property("max_supported", project.property("max_supported_version"))
 
 		filesMatching("fabric.mod.json") {
 			expand(
 				mutableMapOf(
-					"version" to project.property("mod_version")
+					"version" to stonecutter.current.version,
+					"min_supported" to project.property("min_supported_version"),
+					"max_supported" to project.property("max_supported_version")
 				)
 			)
 		}
