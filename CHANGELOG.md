@@ -1,0 +1,3 @@
+- Added support for 1.21.9 and 1.21.10
+- Updated Ukrainian translation (StarmanMine142)
+- Fixed incompatibility with some other mods that use the Locator Bar
