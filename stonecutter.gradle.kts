@@ -3,7 +3,7 @@ plugins {
 }
 
 stonecutter.tasks {
-    //order("publishModrinth")
+    order("publishModrinth")
 }
 
 stonecutter active "1.21.9"
