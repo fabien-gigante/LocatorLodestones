@@ -24,6 +24,7 @@ public class LocatorLodestones implements ClientModInitializer {
 		LOGGER.info("Initializing Locator Lodestones");
 		ConfigManager.initConfig();
 		ClientTickEvents.END_CLIENT_TICK.register(client -> WaypointTracking.updateWaypoints(client.player));
+		ClientTickEvents.START_WORLD_TICK.register(world -> WaypointTracking.resetWaypoints());
 	}
 
 	private static RegistryKey<WaypointStyle> style(String path) {

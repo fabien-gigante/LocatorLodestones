@@ -3,6 +3,7 @@ package net.pneumono.locator_lodestones;
 import com.mojang.datafixers.util.Either;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.world.ClientWaypointHandler;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.component.type.LodestoneTrackerComponent;
@@ -23,13 +24,20 @@ import net.pneumono.locator_lodestones.config.ConfigManager;
 import java.util.*;
 
 public class WaypointTracking {
-    public static final Map<Either<UUID, String>, Optional<Text>> WAYPOINT_NAMES = new HashMap<>();
     protected static final List<TrackedWaypoint> WAYPOINTS = new ArrayList<>();
+    public static final Map<Either<UUID, String>, Optional<Text>> WAYPOINT_NAMES = new HashMap<>();
     private static boolean dirty = false;
     private static long lastUpdateTime = 0;
 
     public static void markWaypointsDirty() {
         dirty = true;
+    }
+
+    public static void resetWaypoints() {
+        WAYPOINTS.clear();
+        WAYPOINT_NAMES.clear();
+        lastUpdateTime = 0;
+        markWaypointsDirty();
     }
 
     public static void updateWaypoints(ClientPlayerEntity player) {
@@ -41,21 +49,24 @@ public class WaypointTracking {
         WAYPOINTS.clear();
         WAYPOINTS.addAll(getWaypointsFromPlayer(player));
 
+        ClientWaypointHandler waypointHandler = player.networkHandler.getWaypointHandler();
+
         for (TrackedWaypoint newWaypoint : WAYPOINTS) {
             boolean isTracked = false;
 
             for (TrackedWaypoint oldWaypoint : oldWaypoints) {
                 if (newWaypoint.getSource().equals(oldWaypoint.getSource())) {
                     isTracked = true;
-                    player.networkHandler.getWaypointHandler().onUpdate(newWaypoint);
+                    waypointHandler.onUpdate(newWaypoint);
                     break;
                 }
             }
 
             if (!isTracked) {
-                player.networkHandler.getWaypointHandler().onTrack(newWaypoint);
+                waypointHandler.onTrack(newWaypoint);
             }
         }
+
         for (TrackedWaypoint oldWaypoint : oldWaypoints) {
             boolean isTracked = false;
 
@@ -67,7 +78,7 @@ public class WaypointTracking {
             }
 
             if (!isTracked) {
-                player.networkHandler.getWaypointHandler().onUntrack(oldWaypoint);
+                waypointHandler.onUntrack(oldWaypoint);
             }
         }
     }
