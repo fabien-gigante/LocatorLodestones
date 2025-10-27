@@ -102,6 +102,14 @@ public class ConfigManager {
         return CONFIG.shouldShowInSpectator();
     }
 
+    public static boolean shouldShowHotbarOnly() {
+        return CONFIG.shouldShowHotbarOnly();
+    }
+
+    public static boolean shouldShowCompassDial() {
+        return CONFIG.shouldShowCompassDial();
+    }
+
     public static boolean colorCustomization() {
         return CONFIG.colorCustomization();
     }

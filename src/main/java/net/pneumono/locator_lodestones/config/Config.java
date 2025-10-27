@@ -5,7 +5,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public class Config {
     public static final Config DEFAULT = new Config(
-            true, true, true, true, true,
+            true, true,
+            true, true, true, false, false,
             true, new ColorProvider(null), new ColorProvider(0xBCE0EB)
     );
 
@@ -14,6 +15,8 @@ public class Config {
     public boolean showRecovery;
     public boolean showBundled;
     public boolean showInSpectator;
+    public boolean showHotbarOnly;
+    public boolean showCompassDial;
     public boolean colorCustomization;
     public ColorProvider lodestoneColor;
     public ColorProvider recoveryColor;
@@ -24,6 +27,8 @@ public class Config {
             Codec.BOOL.fieldOf("show_recovery_compasses").forGetter(Config::shouldShowRecovery),
             Codec.BOOL.fieldOf("show_bundled_compasses").forGetter(Config::shouldShowBundled),
             Codec.BOOL.fieldOf("show_in_spectator").forGetter(Config::shouldShowInSpectator),
+            Codec.BOOL.fieldOf("show_hotbar_only").forGetter(Config::shouldShowHotbarOnly),
+            Codec.BOOL.fieldOf("show_compass_dial").forGetter(Config::shouldShowCompassDial),
             Codec.BOOL.fieldOf("color_customization").forGetter(Config::colorCustomization),
             ColorProvider.CODEC.fieldOf("lodestone_color").forGetter(Config::getLodestoneColor),
             ColorProvider.CODEC.fieldOf("recovery_color").forGetter(Config::getRecoveryColor)
@@ -31,7 +36,7 @@ public class Config {
 
     public Config(
             boolean tabForcesLocatorBar, boolean tabShowsNames, boolean showRecovery, boolean showBundled,
-            boolean showInSpectator, boolean colorCustomization, ColorProvider lodestoneColor,
+            boolean showInSpectator, boolean showHotbarOnly, boolean showCompassDial,boolean colorCustomization, ColorProvider lodestoneColor,
             ColorProvider recoveryColor
     ) {
         this.tabForcesLocatorBar = tabForcesLocatorBar;
@@ -39,6 +44,8 @@ public class Config {
         this.showRecovery = showRecovery;
         this.showBundled = showBundled;
         this.showInSpectator = showInSpectator;
+        this.showHotbarOnly = showHotbarOnly;
+        this.showCompassDial = showCompassDial;
         this.colorCustomization = colorCustomization;
         this.lodestoneColor = lodestoneColor;
         this.recoveryColor = recoveryColor;
@@ -62,6 +69,14 @@ public class Config {
 
     public boolean shouldShowInSpectator() {
         return showInSpectator;
+    }
+
+    public boolean shouldShowHotbarOnly() {
+        return showHotbarOnly;
+    }
+
+    public boolean shouldShowCompassDial() {
+        return showCompassDial;
     }
 
     public boolean colorCustomization() {

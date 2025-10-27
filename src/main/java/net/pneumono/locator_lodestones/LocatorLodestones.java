@@ -7,6 +7,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.waypoint.WaypointStyle;
 import net.minecraft.world.waypoint.WaypointStyles;
 import net.pneumono.locator_lodestones.config.ConfigManager;
+
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,11 +20,15 @@ public class LocatorLodestones implements ClientModInitializer {
 
 	public static final RegistryKey<WaypointStyle> LODESTONE_STYLE = style("lodestone");
 	public static final RegistryKey<WaypointStyle> DEATH_STYLE = style("death");
+	public static final RegistryKey<WaypointStyle> COMPASS_DIVISION_STYLE = style("compass_division");
+	public static final RegistryKey<WaypointStyle> COMPASS_DIVISION_SMALL_STYLE = style("compass_division_small");
+	public static final List<RegistryKey<WaypointStyle>> COMPASS_CARDINAL_STYLE = List.of( style("compass_south"), style("compass_west"), style("compass_north"), style("compass_east") );
 
 	@Override
 	public void onInitializeClient() {
 		LOGGER.info("Initializing Locator Lodestones");
 		ConfigManager.initConfig();
+		WaypointTracking.init();
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (client.world != null && !client.isPaused()) {
 				WaypointTracking.updateWaypoints(client.player, false);

@@ -1,32 +1,30 @@
 package net.pneumono.locator_lodestones;
 
-import com.mojang.datafixers.util.Either;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.component.type.LodestoneTrackerComponent;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.World;
 import net.minecraft.world.waypoint.TrackedWaypoint;
-import net.minecraft.world.waypoint.Waypoint;
 import net.pneumono.locator_lodestones.config.ConfigManager;
+import net.pneumono.locator_lodestones.waypoints.CompassDialWaypoint;
+import net.pneumono.locator_lodestones.waypoints.NamedWaypoint;
 
 import java.util.*;
 
 public class WaypointTracking {
     private static int UPDATE_COOLDOWN = 20;
-    public static final Map<Either<UUID, String>, Optional<Text>> WAYPOINT_NAMES = new HashMap<>();
     protected static final List<TrackedWaypoint> CURRENT_WAYPOINTS = new ArrayList<>();
     private static final List<TrackedWaypoint> PREVIOUS_WAYPOINTS = new ArrayList<>();
+    private static final List<TrackedWaypoint> COMPASS_DIAL_WAYPOINTS = new ArrayList<>();
     private static boolean dirty = true;
     private static long lastUpdateTime = 0;
 
@@ -73,21 +71,35 @@ public class WaypointTracking {
         PREVIOUS_WAYPOINTS.addAll(waypoints);
     }
 
-    private static List<TrackedWaypoint> getWaypointsFromPlayer(PlayerEntity player) {
-        WAYPOINT_NAMES.clear();
+    public static void init() {
+        if (!ConfigManager.shouldShowCompassDial()) return;
+        for(int azimuth = 0; azimuth < 360; azimuth += 15) {
+            var style = azimuth % 90 == 0 ? LocatorLodestones.COMPASS_CARDINAL_STYLE.get(azimuth/90)
+             : azimuth % 45 == 0 ? LocatorLodestones.COMPASS_DIVISION_STYLE : LocatorLodestones.COMPASS_DIVISION_SMALL_STYLE;
+            COMPASS_DIAL_WAYPOINTS.add(new CompassDialWaypoint("dial_" + azimuth, style, (float)(azimuth * Math.PI / 180)));
+        }
+    }
 
+    private static List<ItemStack> getPlayerStacks(PlayerEntity player) {
         List<ItemStack> stacks = new ArrayList<>();
-        DefaultedList<ItemStack> mainStacks = player.getInventory().getMainStacks();
-        if (mainStacks != null) {
-            stacks.addAll(player.getInventory().getMainStacks());
+        if (ConfigManager.shouldShowHotbarOnly()) {
+            for (int slot=0; slot < PlayerInventory.getHotbarSize(); slot++)
+                stacks.add(player.getInventory().getStack(slot));
+        }
+        else {
+            DefaultedList<ItemStack> mainStacks = player.getInventory().getMainStacks();
+            if (mainStacks != null)
+                stacks.addAll(player.getInventory().getMainStacks());
         }
         ItemStack offHandStack = player.getOffHandStack();
-        if (offHandStack != null) {
+        if (offHandStack != null)
             stacks.add(player.getOffHandStack());
-        }
+        return stacks;
+    }
 
+    private static List<TrackedWaypoint> getWaypointsFromPlayer(PlayerEntity player) {
         List<TrackedWaypoint> waypoints = new ArrayList<>();
-        for (ItemStack stack : stacks) {
+        for (ItemStack stack : getPlayerStacks(player)) {
             //? if >=1.21.9 {
             RegistryKey<World> dimension = player.getEntityWorld().getRegistryKey();
             //?} else {
@@ -101,44 +113,28 @@ public class WaypointTracking {
     private static List<TrackedWaypoint> getWaypointsFromStack(PlayerEntity player, RegistryKey<World> dimension, ItemStack stack) {
         List<TrackedWaypoint> waypoints = new ArrayList<>();
 
+        if (stack.isOf(Items.COMPASS) || stack.isOf(Items.RECOVERY_COMPASS))
+            waypoints.addAll(COMPASS_DIAL_WAYPOINTS);
+
         if (ConfigManager.shouldShowRecovery()) {
             Optional<GlobalPos> lastDeathPos = player.getLastDeathPos();
             if (lastDeathPos.isPresent() && stack.isOf(Items.RECOVERY_COMPASS)) {
                 GlobalPos pos = lastDeathPos.get();
                 if (pos.dimension() == dimension && pos.pos() != null) {
-                    Waypoint.Config config = new Waypoint.Config();
-                    config.style = LocatorLodestones.DEATH_STYLE;
-                    config.color = Optional.ofNullable(
-                            ColorHandler.getColor(stack).orElse(ConfigManager.getRecoveryColor().getColorWithAlpha())
-                    );
-                    Either<UUID, String> source = Either.right("death_" + pos);
-                    waypoints.add(new TrackedWaypoint.Positional(
-                            source,
-                            config,
-                            bufFromPos(pos.pos())
-                    ));
-                    WAYPOINT_NAMES.put(source, getText(stack));
+                    Integer color = ColorHandler.getColor(stack).orElse(ConfigManager.getRecoveryColor().getColorWithAlpha());
+                    TrackedWaypoint waypoint = new NamedWaypoint("death_" + pos, LocatorLodestones.DEATH_STYLE, color, pos.pos(), getText(stack));
+                    waypoints.add(waypoint);
                 }
             }
         }
 
         LodestoneTrackerComponent trackerComponent = stack.get(DataComponentTypes.LODESTONE_TRACKER);
         if (trackerComponent != null && trackerComponent.target().isPresent()) {
-
             GlobalPos pos = trackerComponent.target().get();
             if (pos.dimension() == dimension && pos.pos() != null) {
-                Waypoint.Config config = new Waypoint.Config();
-                config.style = LocatorLodestones.LODESTONE_STYLE;
-                config.color = Optional.ofNullable(
-                        ColorHandler.getColor(stack).orElse(ConfigManager.getLodestoneColor().getColorWithAlpha())
-                );
-                Either<UUID, String> source = Either.right("lodestone_" + pos);
-                waypoints.add(new TrackedWaypoint.Positional(
-                        source,
-                        config,
-                        bufFromPos(pos.pos())
-                ));
-                WAYPOINT_NAMES.put(source, getText(stack));
+                Integer color = ColorHandler.getColor(stack).orElse(ConfigManager.getLodestoneColor().getColorWithAlpha());
+                TrackedWaypoint waypoint = new NamedWaypoint("lodestone_" + pos, LocatorLodestones.LODESTONE_STYLE, color, pos.pos(), getText(stack));
+                waypoints.add(waypoint);
             }
         }
 
@@ -152,14 +148,6 @@ public class WaypointTracking {
         }
 
         return waypoints;
-    }
-
-    private static PacketByteBuf bufFromPos(BlockPos pos) {
-        PacketByteBuf buf = PacketByteBufs.create();
-        buf.writeVarInt(pos.getX());
-        buf.writeVarInt(pos.getY());
-        buf.writeVarInt(pos.getZ());
-        return buf;
     }
 
     private static Optional<Text> getText(ItemStack stack) {
