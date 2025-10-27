@@ -7,7 +7,9 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.world.World;
+//? if >=1.21.9 {
 import net.minecraft.world.waypoint.EntityTickProgress;
+//?}
 import net.minecraft.world.waypoint.TrackedWaypoint;
 import net.minecraft.world.waypoint.Waypoint;
 import net.minecraft.world.waypoint.WaypointStyle;
@@ -23,7 +25,11 @@ public class CompassDialWaypoint extends TrackedWaypoint.Azimuth {
     }
 
     @Override
+    //? if >=1.21.9 {
     public TrackedWaypoint.Pitch getPitch(World world, TrackedWaypoint.PitchProvider cameraProvider, EntityTickProgress tickProgress) {
+    //?} else {
+    /*public TrackedWaypoint.Pitch getPitch(World world, TrackedWaypoint.PitchProvider cameraProvider) {
+    *///?}
         return Pitch.NONE;
     }    
 
