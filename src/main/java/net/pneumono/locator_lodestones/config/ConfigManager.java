@@ -110,6 +110,10 @@ public class ConfigManager {
         return CONFIG.shouldShowCompassDial();
     }
 
+    public static boolean shouldShowDistance() {
+        return CONFIG.shouldShowDistance();
+    }
+
     public static boolean colorCustomization() {
         return CONFIG.colorCustomization();
     }

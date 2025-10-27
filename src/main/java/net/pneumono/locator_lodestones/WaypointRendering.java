@@ -53,8 +53,8 @@ public class WaypointRendering {
     }
 
     public static void render(MinecraftClient client, DrawContext context, RenderTickCounter tickCounter, int centerY) {
-        distanceRendered = false;
-        renderDistance(client, context, tickCounter, centerY);
+        if (ConfigManager.shouldShowDistance())
+            renderDistance(client, context, tickCounter, centerY);
         if (ConfigManager.tabShowsNames() && client.options.playerListKey.isPressed())
             renderNames(client, context, tickCounter, centerY);
     }
@@ -81,6 +81,7 @@ public class WaypointRendering {
 
 
     protected static void renderDistance(MinecraftClient client, DrawContext context, RenderTickCounter tickCounter, int centerY) {
+        distanceRendered = false;        
         ClientWaypointHandler handler = client.player.networkHandler.getWaypointHandler();
         if (!(handler instanceof IWaypointAccessor accessor)) return;
         Stream<TrackedWaypoint> waypoints = accessor.getWaypointsUnsorted().stream().filter(waypoint -> !(waypoint instanceof CompassDialWaypoint));

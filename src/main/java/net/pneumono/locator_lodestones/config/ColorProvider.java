@@ -19,8 +19,11 @@ public record ColorProvider(@Nullable Integer color) {
         }
     }
 
+    public @Nullable Integer getColorWithAlpha(int alpha) {
+        return color == null ? null : ColorHelper.withAlpha(alpha, color);
+    }
     public @Nullable Integer getColorWithAlpha() {
-        return color == null ? null : ColorHelper.withAlpha(255, color);
+        return getColorWithAlpha(255);
     }
 
     public String asString() {

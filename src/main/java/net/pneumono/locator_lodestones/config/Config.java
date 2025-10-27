@@ -6,7 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 public class Config {
     public static final Config DEFAULT = new Config(
             true, true,
-            true, true, true, false, false,
+            true, true, true, false, false, false,
             true, new ColorProvider(null), new ColorProvider(0xBCE0EB), new ColorProvider(0x879E7B)
     );
 
@@ -17,6 +17,7 @@ public class Config {
     public boolean showInSpectator;
     public boolean showHotbarOnly;
     public boolean showCompassDial;
+    public boolean showDistance;
     public boolean colorCustomization;
     public ColorProvider lodestoneColor;
     public ColorProvider recoveryColor;
@@ -30,6 +31,7 @@ public class Config {
             Codec.BOOL.fieldOf("show_in_spectator").forGetter(Config::shouldShowInSpectator),
             Codec.BOOL.fieldOf("show_hotbar_only").forGetter(Config::shouldShowHotbarOnly),
             Codec.BOOL.fieldOf("show_compass_dial").forGetter(Config::shouldShowCompassDial),
+            Codec.BOOL.fieldOf("show_distance").forGetter(Config::shouldShowDistance),
             Codec.BOOL.fieldOf("color_customization").forGetter(Config::colorCustomization),
             ColorProvider.CODEC.fieldOf("lodestone_color").forGetter(Config::getLodestoneColor),
             ColorProvider.CODEC.fieldOf("recovery_color").forGetter(Config::getRecoveryColor),
@@ -38,8 +40,8 @@ public class Config {
 
     public Config(
             boolean tabForcesLocatorBar, boolean tabShowsNames, boolean showRecovery, boolean showBundled,
-            boolean showInSpectator, boolean showHotbarOnly, boolean showCompassDial, boolean colorCustomization,
-            ColorProvider lodestoneColor, ColorProvider recoveryColor, ColorProvider dialColor
+            boolean showInSpectator, boolean showHotbarOnly, boolean showCompassDial, boolean showDistance,
+            boolean colorCustomization, ColorProvider lodestoneColor, ColorProvider recoveryColor, ColorProvider dialColor
     ) {
         this.tabForcesLocatorBar = tabForcesLocatorBar;
         this.tabShowsNames = tabShowsNames;
@@ -48,6 +50,7 @@ public class Config {
         this.showInSpectator = showInSpectator;
         this.showHotbarOnly = showHotbarOnly;
         this.showCompassDial = showCompassDial;
+        this.showDistance = showDistance;
         this.colorCustomization = colorCustomization;
         this.lodestoneColor = lodestoneColor;
         this.recoveryColor = recoveryColor;
@@ -80,6 +83,10 @@ public class Config {
 
     public boolean shouldShowCompassDial() {
         return showCompassDial;
+    }
+
+    public boolean shouldShowDistance() {
+        return showDistance;
     }
 
     public boolean colorCustomization() {
