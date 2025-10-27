@@ -34,7 +34,7 @@ public class WaypointNameRendering {
 
         TrackedWaypoint bestWaypoint = null;
         double bestYaw = 61;
-        for (TrackedWaypoint waypoint : WaypointTracking.WAYPOINTS) {
+        for (TrackedWaypoint waypoint : WaypointTracking.getWaypoints()) {
             //? if >=1.21.9 {
             double yaw = waypoint.getRelativeYaw(client.world, client.gameRenderer.getCamera(), entityTickProgress);
             //?} else {
@@ -48,7 +48,7 @@ public class WaypointNameRendering {
         }
 
         if (bestWaypoint != null) {
-            Optional<Text> textOptional = WaypointTracking.WAYPOINT_NAMES.get(bestWaypoint.getSource());
+            Optional<Text> textOptional = WaypointTracking.getWaypointName(bestWaypoint.getSource());
             if (textOptional.isPresent()) {
                 Text text = textOptional.get();
                 TextRenderer textRenderer = client.textRenderer;

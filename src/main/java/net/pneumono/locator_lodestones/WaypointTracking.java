@@ -24,10 +24,18 @@ import net.pneumono.locator_lodestones.config.ConfigManager;
 import java.util.*;
 
 public class WaypointTracking {
-    protected static final List<TrackedWaypoint> WAYPOINTS = new ArrayList<>();
-    public static final Map<Either<UUID, String>, Optional<Text>> WAYPOINT_NAMES = new HashMap<>();
+    private static final Map<Either<UUID, String>, TrackedWaypoint> WAYPOINTS = new HashMap<>();
+    private static final Map<Either<UUID, String>, Optional<Text>> WAYPOINT_NAMES = new HashMap<>();
     private static boolean dirty = false;
     private static long lastUpdateTime = 0;
+
+    public static Collection<TrackedWaypoint> getWaypoints() {
+        return WAYPOINTS.values();
+    }
+
+    public static Optional<Text> getWaypointName(Either<UUID, String> source) {
+        return WAYPOINT_NAMES.get(source);
+    }
 
     public static void markWaypointsDirty() {
         dirty = true;
@@ -45,39 +53,22 @@ public class WaypointTracking {
         lastUpdateTime = player.age;
         dirty = false;
 
-        List<TrackedWaypoint> oldWaypoints = new ArrayList<>(WAYPOINTS);
+        Map<Either<UUID, String>, TrackedWaypoint> oldWaypoints = new HashMap<>(WAYPOINTS);
         WAYPOINTS.clear();
-        WAYPOINTS.addAll(getWaypointsFromPlayer(player));
+        getWaypointsFromPlayer(player).forEach(waypoint -> WAYPOINTS.put(waypoint.getSource(), waypoint));
 
         ClientWaypointHandler waypointHandler = player.networkHandler.getWaypointHandler();
 
-        for (TrackedWaypoint newWaypoint : WAYPOINTS) {
-            boolean isTracked = false;
-
-            for (TrackedWaypoint oldWaypoint : oldWaypoints) {
-                if (newWaypoint.getSource().equals(oldWaypoint.getSource())) {
-                    isTracked = true;
-                    waypointHandler.onUpdate(newWaypoint);
-                    break;
-                }
-            }
-
-            if (!isTracked) {
+        for (TrackedWaypoint newWaypoint : WAYPOINTS.values()) {
+            if (oldWaypoints.containsKey(newWaypoint.getSource())) {
+                waypointHandler.onUpdate(newWaypoint);
+            } else {
                 waypointHandler.onTrack(newWaypoint);
             }
         }
 
-        for (TrackedWaypoint oldWaypoint : oldWaypoints) {
-            boolean isTracked = false;
-
-            for (TrackedWaypoint newWaypoint : WAYPOINTS) {
-                if (oldWaypoint.getSource().equals(newWaypoint.getSource())) {
-                    isTracked = true;
-                    break;
-                }
-            }
-
-            if (!isTracked) {
+        for (TrackedWaypoint oldWaypoint : oldWaypoints.values()) {
+            if (!WAYPOINTS.containsKey(oldWaypoint.getSource())) {
                 waypointHandler.onUntrack(oldWaypoint);
             }
         }
