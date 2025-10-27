@@ -4,6 +4,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.gui.hud.bar.Bar;
+import net.minecraft.client.font.TextRenderer;
 import net.pneumono.locator_lodestones.WaypointRendering;
 import net.pneumono.locator_lodestones.config.ConfigManager;
 import org.spongepowered.asm.mixin.Final;
@@ -38,7 +39,7 @@ public abstract class InGameHudMixin {
             target = "Lnet/minecraft/client/gui/hud/bar/Bar;drawExperienceLevel(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/font/TextRenderer;I)V"
         )
     )
-    private void conditionalDrawExperienceLevel(DrawContext context, net.minecraft.client.font.TextRenderer textRenderer, int level) {
+    private void conditionalDrawExperienceLevel(DrawContext context, TextRenderer textRenderer, int level) {
         if (WaypointRendering.shouldDrawExperienceLevel())
             Bar.drawExperienceLevel(context, textRenderer, level);
     }    
