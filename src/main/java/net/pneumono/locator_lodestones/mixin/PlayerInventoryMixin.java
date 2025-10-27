@@ -20,8 +20,8 @@ public abstract class PlayerInventoryMixin {
             at = @At("RETURN")
     )
     private void updateWaypoints(CallbackInfo ci) {
-        if (this.player instanceof ClientPlayerEntity clientPlayer) {
-            WaypointTracking.updateWaypoints(clientPlayer);
+        if (this.player instanceof ClientPlayerEntity) {
+            WaypointTracking.markWaypointsDirty();
         }
     }
 }

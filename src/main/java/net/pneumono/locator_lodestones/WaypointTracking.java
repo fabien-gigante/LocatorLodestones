@@ -25,11 +25,17 @@ import java.util.*;
 public class WaypointTracking {
     public static final Map<Either<UUID, String>, Optional<Text>> WAYPOINT_NAMES = new HashMap<>();
     protected static final List<TrackedWaypoint> WAYPOINTS = new ArrayList<>();
+    private static boolean dirty;
     private static long lastUpdateTime = 0;
 
+    public static void markWaypointsDirty() {
+        dirty = true;
+    }
+
     public static void updateWaypoints(ClientPlayerEntity player) {
-        if (lastUpdateTime + 20 > player.age && lastUpdateTime < player.age) return;
+        if (!dirty || player == null || (lastUpdateTime + 20 > player.age && lastUpdateTime < player.age)) return;
         lastUpdateTime = player.age;
+        dirty = false;
 
         List<TrackedWaypoint> oldWaypoints = new ArrayList<>(WAYPOINTS);
         WAYPOINTS.clear();
