@@ -26,10 +26,14 @@ public class WaypointTracking {
     public static final Map<Either<UUID, String>, Optional<Text>> WAYPOINT_NAMES = new HashMap<>();
     protected static final List<TrackedWaypoint> CURRENT_WAYPOINTS = new ArrayList<>();
     private static final List<TrackedWaypoint> PREVIOUS_WAYPOINTS = new ArrayList<>();
+    private static boolean dirty = true;
     private static long lastUpdateTime = 0;
 
-    public static void updateWaypoints(ClientPlayerEntity player) {
+    public static void updateWaypoints(ClientPlayerEntity player, boolean makeDirty) {
+        if (makeDirty) dirty = true;
+        if (!dirty) return;
         if (lastUpdateTime + 20 > player.age && lastUpdateTime < player.age) return;
+        dirty = false;
         lastUpdateTime = player.age;
 
         List<TrackedWaypoint> waypoints = getWaypointsFromPlayer(player);
