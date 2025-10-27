@@ -137,6 +137,15 @@ public class WaypointTracking {
             }
         }
 
+        if (ConfigManager.getConfig().showSpawn() && stack.isOf(Items.COMPASS) && trackerComponent == null) {
+            GlobalPos pos = player.getEntityWorld().getSpawnPoint().globalPos();
+            if (pos.dimension() == dimension && pos.pos() != null) {
+                Integer color = ColorHandler.getColor(stack).orElse(ConfigManager.getConfig().spawnColor().getColorWithAlpha());
+                TrackedWaypoint waypoint = new NamedPositionalWaypoint("spawn_" + pos, LocatorLodestones.SPAWN_STYLE, color, pos.pos(), getText(stack));
+                waypoints.add(waypoint);
+            }
+        }
+
         if (ConfigManager.getConfig().showBundled()) {
             BundleContentsComponent contentsComponent = stack.get(DataComponentTypes.BUNDLE_CONTENTS);
             if (contentsComponent != null) {

@@ -22,6 +22,7 @@ public class LocatorLodestones implements ClientModInitializer {
 
 	public static final RegistryKey<WaypointStyle> LODESTONE_STYLE = style("lodestone");
 	public static final RegistryKey<WaypointStyle> DEATH_STYLE = style("death");
+	public static final RegistryKey<WaypointStyle> SPAWN_STYLE = style("spawn");
 	public static final RegistryKey<WaypointStyle> COMPASS_DIVISION_STYLE = style("compass_division");
 	public static final RegistryKey<WaypointStyle> COMPASS_DIVISION_SMALL_STYLE = style("compass_division_small");
 	public static final List<RegistryKey<WaypointStyle>> COMPASS_CARDINAL_STYLE = List.of( style("compass_south"), style("compass_west"), style("compass_north"), style("compass_east") );
