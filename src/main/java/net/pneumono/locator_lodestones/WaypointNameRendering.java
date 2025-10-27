@@ -11,7 +11,7 @@ import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.waypoint.TrackedWaypoint;
 import net.pneumono.locator_lodestones.config.ConfigManager;
-import net.pneumono.locator_lodestones.waypoints.NamedWaypoint;
+import net.pneumono.locator_lodestones.waypoints.NamedPositionalWaypoint;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -57,10 +57,10 @@ public class WaypointNameRendering {
 
     public static void renderNames(MinecraftClient client, DrawContext context, RenderTickCounter tickCounter, int centerY) {
         if (!ConfigManager.tabShowsNames() || !client.options.playerListKey.isPressed()) return;
-        var best = getBestWaypoint(client, tickCounter, WaypointTracking.getWaypoints(), w -> w instanceof NamedWaypoint);
-        if (!(best.getFirst() instanceof NamedWaypoint namedWaypoint)) return;
+        var best = getBestWaypoint(client, tickCounter, WaypointTracking.getWaypoints(), w -> w instanceof NamedPositionalWaypoint);
+        if (!(best.getFirst() instanceof NamedPositionalWaypoint namedWaypoint)) return;
 
-        Optional<Text> textOptional = namedWaypoint.GetName();
+        Optional<Text> textOptional = namedWaypoint.getName();
         if (textOptional.isPresent()) {
             Text text = textOptional.get();
             TextRenderer textRenderer = client.textRenderer;

@@ -13,21 +13,21 @@ import net.minecraft.world.waypoint.TrackedWaypoint;
 import net.minecraft.world.waypoint.Waypoint;
 import net.minecraft.world.waypoint.WaypointStyle;
 
-public class NamedWaypoint extends TrackedWaypoint.Positional {
+public class NamedPositionalWaypoint extends TrackedWaypoint.Positional {
     protected Optional<Text> name = Optional.empty();
 
-    public NamedWaypoint(String source, Config config, Vec3i pos) {
+    public NamedPositionalWaypoint(String source, Config config, Vec3i pos) {
         super(Either.right(source), config, bufFromPos(pos));
     }
-    public NamedWaypoint(String source, RegistryKey<WaypointStyle> style, @Nullable Integer color, Vec3i pos) {
+    public NamedPositionalWaypoint(String source, RegistryKey<WaypointStyle> style, @Nullable Integer color, Vec3i pos) {
         this(source, configFromStyle(style, color), pos);
     }
-    public NamedWaypoint(String source, RegistryKey<WaypointStyle> style, @Nullable Integer color, Vec3i pos, Optional<Text> name) {
+    public NamedPositionalWaypoint(String source, RegistryKey<WaypointStyle> style, @Nullable Integer color, Vec3i pos, Optional<Text> name) {
         this(source, style, color, pos);
         this.name = name;
     }
 
-    public Optional<Text> GetName() { return name; }
+    public Optional<Text> getName() { return name; }
 
     private static Config configFromStyle(RegistryKey<WaypointStyle> style, @Nullable Integer color) {
         Waypoint.Config config = new Waypoint.Config();

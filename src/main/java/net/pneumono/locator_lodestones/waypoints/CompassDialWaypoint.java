@@ -1,19 +1,17 @@
 package net.pneumono.locator_lodestones.waypoints;
 
 import java.util.Optional;
-import org.jetbrains.annotations.Nullable;
 
 import com.mojang.datafixers.util.Either;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import net.minecraft.world.waypoint.EntityTickProgress;
 import net.minecraft.world.waypoint.TrackedWaypoint;
 import net.minecraft.world.waypoint.Waypoint;
 import net.minecraft.world.waypoint.WaypointStyle;
+import net.pneumono.locator_lodestones.config.ConfigManager;
 
 public class CompassDialWaypoint extends TrackedWaypoint.Azimuth {
     public CompassDialWaypoint(String source, Config config, float azimuth) {
@@ -32,7 +30,7 @@ public class CompassDialWaypoint extends TrackedWaypoint.Azimuth {
     private static Config configFromStyle(RegistryKey<WaypointStyle> style) {
         Waypoint.Config config = new Waypoint.Config();
         config.style = style;
-        config.color = Optional.of(0xFF879E7B);
+        config.color = Optional.of(ConfigManager.getDialColor().getColorWithAlpha());
         return config;
     }
     

@@ -7,7 +7,7 @@ public class Config {
     public static final Config DEFAULT = new Config(
             true, true,
             true, true, true, false, false,
-            true, new ColorProvider(null), new ColorProvider(0xBCE0EB)
+            true, new ColorProvider(null), new ColorProvider(0xBCE0EB), new ColorProvider(0x879E7B)
     );
 
     public boolean tabForcesLocatorBar;
@@ -20,6 +20,7 @@ public class Config {
     public boolean colorCustomization;
     public ColorProvider lodestoneColor;
     public ColorProvider recoveryColor;
+    public ColorProvider dialColor;
 
     public static final Codec<Config> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.BOOL.fieldOf("tab_forces_locator_bar").forGetter(Config::tabForcesLocatorBar),
@@ -31,13 +32,14 @@ public class Config {
             Codec.BOOL.fieldOf("show_compass_dial").forGetter(Config::shouldShowCompassDial),
             Codec.BOOL.fieldOf("color_customization").forGetter(Config::colorCustomization),
             ColorProvider.CODEC.fieldOf("lodestone_color").forGetter(Config::getLodestoneColor),
-            ColorProvider.CODEC.fieldOf("recovery_color").forGetter(Config::getRecoveryColor)
+            ColorProvider.CODEC.fieldOf("recovery_color").forGetter(Config::getRecoveryColor),
+            ColorProvider.CODEC.fieldOf("dial_color").forGetter(Config::getRecoveryColor)
     ).apply(instance, Config::new));
 
     public Config(
             boolean tabForcesLocatorBar, boolean tabShowsNames, boolean showRecovery, boolean showBundled,
-            boolean showInSpectator, boolean showHotbarOnly, boolean showCompassDial,boolean colorCustomization, ColorProvider lodestoneColor,
-            ColorProvider recoveryColor
+            boolean showInSpectator, boolean showHotbarOnly, boolean showCompassDial, boolean colorCustomization,
+            ColorProvider lodestoneColor, ColorProvider recoveryColor, ColorProvider dialColor
     ) {
         this.tabForcesLocatorBar = tabForcesLocatorBar;
         this.tabShowsNames = tabShowsNames;
@@ -49,6 +51,7 @@ public class Config {
         this.colorCustomization = colorCustomization;
         this.lodestoneColor = lodestoneColor;
         this.recoveryColor = recoveryColor;
+        this.dialColor = dialColor;
     }
 
     public boolean tabForcesLocatorBar() {
@@ -89,5 +92,9 @@ public class Config {
 
     public ColorProvider getRecoveryColor() {
         return recoveryColor;
+    }
+
+    public ColorProvider getDialColor() {
+        return dialColor;
     }
 }

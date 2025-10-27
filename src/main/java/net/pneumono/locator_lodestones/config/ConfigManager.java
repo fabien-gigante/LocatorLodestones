@@ -121,4 +121,8 @@ public class ConfigManager {
     public static ColorProvider getRecoveryColor() {
         return CONFIG.getRecoveryColor();
     }
+
+    public static ColorProvider getDialColor() {
+        return CONFIG.getDialColor();
+    }
 }

@@ -18,7 +18,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.waypoint.TrackedWaypoint;
 import net.pneumono.locator_lodestones.config.ConfigManager;
 import net.pneumono.locator_lodestones.waypoints.CompassDialWaypoint;
-import net.pneumono.locator_lodestones.waypoints.NamedWaypoint;
+import net.pneumono.locator_lodestones.waypoints.NamedPositionalWaypoint;
 
 import java.util.*;
 
@@ -70,11 +70,12 @@ public class WaypointTracking {
     }
 
     public static void init() {
-        if (!ConfigManager.shouldShowCompassDial()) return;
-        for(int azimuth = 0; azimuth < 360; azimuth += 15) {
-            var style = azimuth % 90 == 0 ? LocatorLodestones.COMPASS_CARDINAL_STYLE.get(azimuth/90)
-             : azimuth % 45 == 0 ? LocatorLodestones.COMPASS_DIVISION_STYLE : LocatorLodestones.COMPASS_DIVISION_SMALL_STYLE;
-            COMPASS_DIAL_WAYPOINTS.add(new CompassDialWaypoint("dial_" + azimuth, style, (float)(azimuth * Math.PI / 180)));
+        if (ConfigManager.shouldShowCompassDial()) {
+            for(int azimuth = 0; azimuth < 360; azimuth += 15) {
+                var style = azimuth % 90 == 0 ? LocatorLodestones.COMPASS_CARDINAL_STYLE.get(azimuth / 90) :
+                            azimuth % 45 == 0 ? LocatorLodestones.COMPASS_DIVISION_STYLE : LocatorLodestones.COMPASS_DIVISION_SMALL_STYLE;
+                COMPASS_DIAL_WAYPOINTS.add(new CompassDialWaypoint("dial_" + azimuth, style, (float)(azimuth * Math.PI / 180)));
+            }
         }
     }
 
@@ -120,7 +121,7 @@ public class WaypointTracking {
                 GlobalPos pos = lastDeathPos.get();
                 if (pos.dimension() == dimension && pos.pos() != null) {
                     Integer color = ColorHandler.getColor(stack).orElse(ConfigManager.getRecoveryColor().getColorWithAlpha());
-                    TrackedWaypoint waypoint = new NamedWaypoint("death_" + pos, LocatorLodestones.DEATH_STYLE, color, pos.pos(), getText(stack));
+                    TrackedWaypoint waypoint = new NamedPositionalWaypoint("death_" + pos, LocatorLodestones.DEATH_STYLE, color, pos.pos(), getText(stack));
                     waypoints.add(waypoint);
                 }
             }
@@ -131,7 +132,7 @@ public class WaypointTracking {
             GlobalPos pos = trackerComponent.target().get();
             if (pos.dimension() == dimension && pos.pos() != null) {
                 Integer color = ColorHandler.getColor(stack).orElse(ConfigManager.getLodestoneColor().getColorWithAlpha());
-                TrackedWaypoint waypoint = new NamedWaypoint("lodestone_" + pos, LocatorLodestones.LODESTONE_STYLE, color, pos.pos(), getText(stack));
+                TrackedWaypoint waypoint = new NamedPositionalWaypoint("lodestone_" + pos, LocatorLodestones.LODESTONE_STYLE, color, pos.pos(), getText(stack));
                 waypoints.add(waypoint);
             }
         }
