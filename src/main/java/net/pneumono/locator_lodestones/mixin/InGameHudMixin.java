@@ -20,8 +20,8 @@ public abstract class InGameHudMixin {
             cancellable = true
     )
     private void forceLocatorBarWhenPlayerListOpen(CallbackInfoReturnable<InGameHud.BarType> info) {
-        boolean canShow = ConfigManager.tabForcesLocatorBar()
-                && (ConfigManager.shouldShowInSpectator() || (client.player != null && !client.player.isSpectator()));
+        boolean canShow = ConfigManager.getConfig().tabForcesLocatorBar()
+                && (ConfigManager.getConfig().showInSpectator() || (client.player != null && !client.player.isSpectator()));
         if (canShow && client.options.playerListKey.isPressed()) {
             info.setReturnValue(InGameHud.BarType.LOCATOR);
         }

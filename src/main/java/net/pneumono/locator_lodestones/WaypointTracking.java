@@ -70,7 +70,7 @@ public class WaypointTracking {
     }
 
     public static void init() {
-        if (ConfigManager.shouldShowCompassDial()) {
+        if (ConfigManager.getConfig().showCompassDial()) {
             for(int azimuth = 0; azimuth < 360; azimuth += 15) {
                 var style = azimuth % 90 == 0 ? LocatorLodestones.COMPASS_CARDINAL_STYLE.get(azimuth / 90) :
                             azimuth % 45 == 0 ? LocatorLodestones.COMPASS_DIVISION_STYLE : LocatorLodestones.COMPASS_DIVISION_SMALL_STYLE;
@@ -81,7 +81,7 @@ public class WaypointTracking {
 
     private static List<ItemStack> getPlayerStacks(PlayerEntity player) {
         List<ItemStack> stacks = new ArrayList<>();
-        if (ConfigManager.shouldShowHotbarOnly()) {
+        if (ConfigManager.getConfig().showHotbarOnly()) {
             for (int slot=0; slot < PlayerInventory.getHotbarSize(); slot++)
                 stacks.add(player.getInventory().getStack(slot));
         }
@@ -115,12 +115,12 @@ public class WaypointTracking {
         if (stack.isOf(Items.COMPASS) || stack.isOf(Items.RECOVERY_COMPASS))
             waypoints.addAll(COMPASS_DIAL_WAYPOINTS);
 
-        if (ConfigManager.shouldShowRecovery()) {
+        if (ConfigManager.getConfig().showRecovery()) {
             Optional<GlobalPos> lastDeathPos = player.getLastDeathPos();
             if (lastDeathPos.isPresent() && stack.isOf(Items.RECOVERY_COMPASS)) {
                 GlobalPos pos = lastDeathPos.get();
                 if (pos.dimension() == dimension && pos.pos() != null) {
-                    Integer color = ColorHandler.getColor(stack).orElse(ConfigManager.getRecoveryColor().getColorWithAlpha());
+                    Integer color = ColorHandler.getColor(stack).orElse(ConfigManager.getConfig().recoveryColor().getColorWithAlpha());
                     TrackedWaypoint waypoint = new NamedPositionalWaypoint("death_" + pos, LocatorLodestones.DEATH_STYLE, color, pos.pos(), getText(stack));
                     waypoints.add(waypoint);
                 }
@@ -131,13 +131,13 @@ public class WaypointTracking {
         if (trackerComponent != null && trackerComponent.target().isPresent()) {
             GlobalPos pos = trackerComponent.target().get();
             if (pos.dimension() == dimension && pos.pos() != null) {
-                Integer color = ColorHandler.getColor(stack).orElse(ConfigManager.getLodestoneColor().getColorWithAlpha());
+                Integer color = ColorHandler.getColor(stack).orElse(ConfigManager.getConfig().lodestoneColor().getColorWithAlpha());
                 TrackedWaypoint waypoint = new NamedPositionalWaypoint("lodestone_" + pos, LocatorLodestones.LODESTONE_STYLE, color, pos.pos(), getText(stack));
                 waypoints.add(waypoint);
             }
         }
 
-        if (ConfigManager.shouldShowBundled()) {
+        if (ConfigManager.getConfig().showBundled()) {
             BundleContentsComponent contentsComponent = stack.get(DataComponentTypes.BUNDLE_CONTENTS);
             if (contentsComponent != null) {
                 contentsComponent.stream().forEach(

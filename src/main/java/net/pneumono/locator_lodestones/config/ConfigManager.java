@@ -20,7 +20,7 @@ import java.nio.file.Path;
 
 public class ConfigManager {
     private static final Path CONFIG_FILE = FabricLoader.getInstance().getConfigDir().resolve(LocatorLodestones.MOD_ID + ".json");
-    public static Config CONFIG = Config.DEFAULT;
+    private static Config CONFIG = Config.DEFAULT;
 
     public static void initConfig() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(
@@ -30,13 +30,15 @@ public class ConfigManager {
                     return 1;
                 })
         ));
-
         reloadConfig();
+    }
+
+    public static Config getConfig() {
+         return CONFIG; 
     }
 
     public static void reloadConfig() {
         CONFIG = readConfigFromFile();
-
         writeConfigToFile(CONFIG);
     }
 
@@ -80,53 +82,5 @@ public class ConfigManager {
         } catch (IOException e) {
             LocatorLodestones.LOGGER.error("Could not write configuration file.", e);
         }
-    }
-
-    public static boolean tabForcesLocatorBar() {
-        return CONFIG.tabForcesLocatorBar();
-    }
-
-    public static boolean tabShowsNames() {
-        return CONFIG.tabShowsNames();
-    }
-
-    public static boolean shouldShowRecovery() {
-        return CONFIG.shouldShowRecovery();
-    }
-
-    public static boolean shouldShowBundled() {
-        return CONFIG.shouldShowBundled();
-    }
-
-    public static boolean shouldShowInSpectator() {
-        return CONFIG.shouldShowInSpectator();
-    }
-
-    public static boolean shouldShowHotbarOnly() {
-        return CONFIG.shouldShowHotbarOnly();
-    }
-
-    public static boolean shouldShowCompassDial() {
-        return CONFIG.shouldShowCompassDial();
-    }
-
-    public static boolean shouldShowDistance() {
-        return CONFIG.shouldShowDistance();
-    }
-
-    public static boolean colorCustomization() {
-        return CONFIG.colorCustomization();
-    }
-
-    public static ColorProvider getLodestoneColor() {
-        return CONFIG.getLodestoneColor();
-    }
-
-    public static ColorProvider getRecoveryColor() {
-        return CONFIG.getRecoveryColor();
-    }
-
-    public static ColorProvider getDialColor() {
-        return CONFIG.getDialColor();
     }
 }

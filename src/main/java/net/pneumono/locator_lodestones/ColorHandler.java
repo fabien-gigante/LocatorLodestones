@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 public class ColorHandler {
     public static Optional<Integer> getColor(ItemStack stack) {
-        if (!ConfigManager.colorCustomization()) return Optional.empty();
+        if (!ConfigManager.getConfig().colorCustomization()) return Optional.empty();
 
         Optional<Integer> color = getColor(stack.get(DataComponentTypes.CUSTOM_NAME));
         if (color.isEmpty()) {

@@ -53,9 +53,9 @@ public class WaypointRendering {
     }
 
     public static void render(MinecraftClient client, DrawContext context, RenderTickCounter tickCounter, int centerY) {
-        if (ConfigManager.shouldShowDistance())
+        if (ConfigManager.getConfig().showDistance())
             renderDistance(client, context, tickCounter, centerY);
-        if (ConfigManager.tabShowsNames() && client.options.playerListKey.isPressed())
+        if (ConfigManager.getConfig().tabShowsNames() && client.options.playerListKey.isPressed())
             renderNames(client, context, tickCounter, centerY);
     }
 
