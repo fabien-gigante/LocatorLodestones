@@ -34,7 +34,7 @@ public class WaypointNameRendering {
 
         TrackedWaypoint bestWaypoint = null;
         double bestYaw = 61;
-        for (TrackedWaypoint waypoint : WaypointTracking.CURRENT_WAYPOINTS) {
+        for (TrackedWaypoint waypoint : WaypointTracking.WAYPOINTS) {
             //? if >=1.21.9 {
             double yaw = waypoint.getRelativeYaw(client.world, client.gameRenderer.getCamera(), entityTickProgress);
             //?} else {

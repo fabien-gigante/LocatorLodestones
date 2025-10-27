@@ -24,25 +24,25 @@ import java.util.*;
 
 public class WaypointTracking {
     public static final Map<Either<UUID, String>, Optional<Text>> WAYPOINT_NAMES = new HashMap<>();
-    protected static final List<TrackedWaypoint> CURRENT_WAYPOINTS = new ArrayList<>();
-    private static final List<TrackedWaypoint> PREVIOUS_WAYPOINTS = new ArrayList<>();
+    protected static final List<TrackedWaypoint> WAYPOINTS = new ArrayList<>();
     private static long lastUpdateTime = 0;
 
     public static void updateWaypoints(ClientPlayerEntity player) {
         if (lastUpdateTime + 20 > player.age && lastUpdateTime < player.age) return;
         lastUpdateTime = player.age;
 
-        List<TrackedWaypoint> waypoints = getWaypointsFromPlayer(player);
-        CURRENT_WAYPOINTS.clear();
-        CURRENT_WAYPOINTS.addAll(waypoints);
+        List<TrackedWaypoint> oldWaypoints = new ArrayList<>(WAYPOINTS);
+        WAYPOINTS.clear();
+        WAYPOINTS.addAll(getWaypointsFromPlayer(player));
 
-        for (TrackedWaypoint newWaypoint : waypoints) {
+        for (TrackedWaypoint newWaypoint : WAYPOINTS) {
             boolean isTracked = false;
 
-            for (TrackedWaypoint oldWaypoint : PREVIOUS_WAYPOINTS) {
+            for (TrackedWaypoint oldWaypoint : oldWaypoints) {
                 if (newWaypoint.getSource().equals(oldWaypoint.getSource())) {
                     isTracked = true;
                     player.networkHandler.getWaypointHandler().onUpdate(newWaypoint);
+                    break;
                 }
             }
 
@@ -50,12 +50,13 @@ public class WaypointTracking {
                 player.networkHandler.getWaypointHandler().onTrack(newWaypoint);
             }
         }
-        for (TrackedWaypoint oldWaypoint : PREVIOUS_WAYPOINTS) {
+        for (TrackedWaypoint oldWaypoint : oldWaypoints) {
             boolean isTracked = false;
 
-            for (TrackedWaypoint newWaypoint : waypoints) {
+            for (TrackedWaypoint newWaypoint : WAYPOINTS) {
                 if (oldWaypoint.getSource().equals(newWaypoint.getSource())) {
                     isTracked = true;
+                    break;
                 }
             }
 
@@ -63,9 +64,6 @@ public class WaypointTracking {
                 player.networkHandler.getWaypointHandler().onUntrack(oldWaypoint);
             }
         }
-
-        PREVIOUS_WAYPOINTS.clear();
-        PREVIOUS_WAYPOINTS.addAll(waypoints);
     }
 
     private static List<TrackedWaypoint> getWaypointsFromPlayer(PlayerEntity player) {
