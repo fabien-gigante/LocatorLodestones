@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.mojang.datafixers.util.Either;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.world.World;
@@ -31,7 +32,13 @@ public class CompassDialWaypoint extends TrackedWaypoint.Azimuth {
     /*public TrackedWaypoint.Pitch getPitch(World world, TrackedWaypoint.PitchProvider cameraProvider) {
     *///?}
         return Pitch.NONE;
-    }    
+    }
+    
+    @Override
+    public double squaredDistanceTo(Entity receiver) {
+        // greater than Double.POSITIVE_INFINITY, so that it always renders in the back
+        return Double.NaN; 
+    }
 
     private static Config configFromStyle(RegistryKey<WaypointStyle> style) {
         Waypoint.Config config = new Waypoint.Config();
