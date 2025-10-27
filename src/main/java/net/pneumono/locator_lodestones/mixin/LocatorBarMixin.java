@@ -5,7 +5,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.bar.Bar;
 import net.minecraft.client.gui.hud.bar.LocatorBar;
 import net.minecraft.client.render.RenderTickCounter;
-import net.pneumono.locator_lodestones.WaypointNameRendering;
+import net.pneumono.locator_lodestones.WaypointRendering;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,6 +24,6 @@ public abstract class LocatorBarMixin implements Bar {
             at = @At("RETURN")
     )
     private void renderClientWaypoints(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-        WaypointNameRendering.renderNames(this.client, context, tickCounter, this.getCenterY(this.client.getWindow()));
+        WaypointRendering.render(this.client, context, tickCounter, this.getCenterY(this.client.getWindow()));
     }
 }

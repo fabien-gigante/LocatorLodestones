@@ -25,13 +25,13 @@ import net.minecraft.world.World;
 import net.minecraft.world.waypoint.EntityTickProgress;
 //?}
 
-public class WaypointNameRendering {
+public class WaypointRendering {
 
     public static Pair<TrackedWaypoint, Double> getBestWaypoint(MinecraftClient client, RenderTickCounter tickCounter, Collection<TrackedWaypoint> waypoints, Predicate<TrackedWaypoint> condition) {
         Camera camera = client.gameRenderer.getCamera();
         //? if >=1.21.9 {
         Entity cameraEntity = client.getCameraEntity();
-        if (cameraEntity == null) return new Pair<TrackedWaypoint, Double>(null, 0d);
+        if (cameraEntity == null) return new Pair<TrackedWaypoint, Double>(null, Double.NaN);
         World world = cameraEntity.getEntityWorld();
         EntityTickProgress entityTickProgress = (tickedEntity) -> tickCounter.getTickProgress(
                 !world.getTickManager().shouldSkipTick(tickedEntity)
@@ -39,7 +39,7 @@ public class WaypointNameRendering {
         //?}
 
         TrackedWaypoint bestWaypoint = null;
-        double bestYaw = 61;
+        double bestYaw = Double.POSITIVE_INFINITY;
         for (TrackedWaypoint waypoint : WaypointTracking.getWaypoints()) {
             //? if >=1.21.9 {
             double yaw = waypoint.getRelativeYaw(client.world, camera, entityTickProgress);
@@ -55,7 +55,7 @@ public class WaypointNameRendering {
         return new Pair<TrackedWaypoint, Double>(bestWaypoint, bestYaw);
     }
 
-    public static void renderNames(MinecraftClient client, DrawContext context, RenderTickCounter tickCounter, int centerY) {
+    public static void render(MinecraftClient client, DrawContext context, RenderTickCounter tickCounter, int centerY) {
         if (!ConfigManager.tabShowsNames() || !client.options.playerListKey.isPressed()) return;
         var best = getBestWaypoint(client, tickCounter, WaypointTracking.getWaypoints(), w -> w instanceof NamedPositionalWaypoint);
         if (!(best.getFirst() instanceof NamedPositionalWaypoint namedWaypoint)) return;

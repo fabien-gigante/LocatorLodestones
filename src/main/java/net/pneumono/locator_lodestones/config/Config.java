@@ -33,7 +33,7 @@ public class Config {
             Codec.BOOL.fieldOf("color_customization").forGetter(Config::colorCustomization),
             ColorProvider.CODEC.fieldOf("lodestone_color").forGetter(Config::getLodestoneColor),
             ColorProvider.CODEC.fieldOf("recovery_color").forGetter(Config::getRecoveryColor),
-            ColorProvider.CODEC.fieldOf("dial_color").forGetter(Config::getRecoveryColor)
+            ColorProvider.CODEC.fieldOf("dial_color").forGetter(Config::getDialColor)
     ).apply(instance, Config::new));
 
     public Config(
