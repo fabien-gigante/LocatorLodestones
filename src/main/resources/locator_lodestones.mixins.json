@@ -12,6 +12,8 @@
     "client": [
         "InGameHudMixin",
         "LocatorBarMixin",
+        "ClientWaypointHandlerMixin",
+        "BarMixin",
         "PlayerInventoryMixin"
     ]
 }
