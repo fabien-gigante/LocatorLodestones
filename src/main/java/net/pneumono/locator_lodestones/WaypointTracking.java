@@ -25,7 +25,7 @@ import java.util.*;
 public class WaypointTracking {
     public static final Map<Either<UUID, String>, Optional<Text>> WAYPOINT_NAMES = new HashMap<>();
     protected static final List<TrackedWaypoint> WAYPOINTS = new ArrayList<>();
-    private static boolean dirty;
+    private static boolean dirty = false;
     private static long lastUpdateTime = 0;
 
     public static void markWaypointsDirty() {
