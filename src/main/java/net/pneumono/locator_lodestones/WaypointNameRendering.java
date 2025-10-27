@@ -13,7 +13,7 @@ import net.minecraft.world.waypoint.TrackedWaypoint;
 import net.pneumono.locator_lodestones.config.ConfigManager;
 import net.pneumono.locator_lodestones.waypoints.NamedWaypoint;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -27,7 +27,7 @@ import net.minecraft.world.waypoint.EntityTickProgress;
 
 public class WaypointNameRendering {
 
-    public static Pair<TrackedWaypoint, Double> getBestWaypoint(MinecraftClient client, RenderTickCounter tickCounter, List<TrackedWaypoint> waypoints, Predicate<TrackedWaypoint> condition) {
+    public static Pair<TrackedWaypoint, Double> getBestWaypoint(MinecraftClient client, RenderTickCounter tickCounter, Collection<TrackedWaypoint> waypoints, Predicate<TrackedWaypoint> condition) {
         Camera camera = client.gameRenderer.getCamera();
         //? if >=1.21.9 {
         Entity cameraEntity = client.getCameraEntity();
@@ -40,8 +40,7 @@ public class WaypointNameRendering {
 
         TrackedWaypoint bestWaypoint = null;
         double bestYaw = 61;
-        for (TrackedWaypoint waypoint : waypoints) {
-            if (!condition.test(waypoint)) continue;
+        for (TrackedWaypoint waypoint : WaypointTracking.getWaypoints()) {
             //? if >=1.21.9 {
             double yaw = waypoint.getRelativeYaw(client.world, camera, entityTickProgress);
             //?} else {
@@ -58,7 +57,7 @@ public class WaypointNameRendering {
 
     public static void renderNames(MinecraftClient client, DrawContext context, RenderTickCounter tickCounter, int centerY) {
         if (!ConfigManager.tabShowsNames() || !client.options.playerListKey.isPressed()) return;
-        var best = getBestWaypoint(client, tickCounter, WaypointTracking.CURRENT_WAYPOINTS, w -> w instanceof NamedWaypoint);
+        var best = getBestWaypoint(client, tickCounter, WaypointTracking.getWaypoints(), w -> w instanceof NamedWaypoint);
         if (!(best.getFirst() instanceof NamedWaypoint namedWaypoint)) return;
 
         Optional<Text> textOptional = namedWaypoint.GetName();

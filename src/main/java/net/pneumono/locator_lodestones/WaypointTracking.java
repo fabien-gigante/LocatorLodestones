@@ -1,6 +1,8 @@
 package net.pneumono.locator_lodestones;
 
+import com.mojang.datafixers.util.Either;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.world.ClientWaypointHandler;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.component.type.LodestoneTrackerComponent;
@@ -22,53 +24,49 @@ import java.util.*;
 
 public class WaypointTracking {
     private static int UPDATE_COOLDOWN = 20;
-    protected static final List<TrackedWaypoint> CURRENT_WAYPOINTS = new ArrayList<>();
-    private static final List<TrackedWaypoint> PREVIOUS_WAYPOINTS = new ArrayList<>();
+    private static final Map<Either<UUID, String>, TrackedWaypoint> WAYPOINTS = new HashMap<>();
     private static final List<TrackedWaypoint> COMPASS_DIAL_WAYPOINTS = new ArrayList<>();
-    private static boolean dirty = true;
+    private static boolean dirty = false;
     private static long lastUpdateTime = 0;
 
-    public static void updateWaypoints(ClientPlayerEntity player, boolean makeDirty) {
-        if (makeDirty) dirty = true;
-        if (!dirty) return;
-        if (lastUpdateTime + UPDATE_COOLDOWN > player.age && lastUpdateTime < player.age) return;
-        dirty = false;
+    public static Collection<TrackedWaypoint> getWaypoints() {
+        return WAYPOINTS.values();
+    }
+
+    public static void markWaypointsDirty() {
+        dirty = true;
+    }
+
+    public static void resetWaypoints() {
+        WAYPOINTS.clear();
+        lastUpdateTime = 0;
+        markWaypointsDirty();
+    }
+
+    public static void updateWaypoints(ClientPlayerEntity player) {
+        if (!dirty || player == null || (lastUpdateTime + UPDATE_COOLDOWN > player.age && lastUpdateTime < player.age)) return;
         lastUpdateTime = player.age;
+        dirty = false;
 
-        List<TrackedWaypoint> waypoints = getWaypointsFromPlayer(player);
-        CURRENT_WAYPOINTS.clear();
-        CURRENT_WAYPOINTS.addAll(waypoints);
+        Map<Either<UUID, String>, TrackedWaypoint> oldWaypoints = new HashMap<>(WAYPOINTS);
+        WAYPOINTS.clear();
+        getWaypointsFromPlayer(player).forEach(waypoint -> WAYPOINTS.put(waypoint.getSource(), waypoint));
 
-        for (TrackedWaypoint newWaypoint : waypoints) {
-            boolean isTracked = false;
+        ClientWaypointHandler waypointHandler = player.networkHandler.getWaypointHandler();
 
-            for (TrackedWaypoint oldWaypoint : PREVIOUS_WAYPOINTS) {
-                if (newWaypoint.getSource().equals(oldWaypoint.getSource())) {
-                    isTracked = true;
-                    player.networkHandler.getWaypointHandler().onUpdate(newWaypoint);
-                }
-            }
-
-            if (!isTracked) {
-                player.networkHandler.getWaypointHandler().onTrack(newWaypoint);
-            }
-        }
-        for (TrackedWaypoint oldWaypoint : PREVIOUS_WAYPOINTS) {
-            boolean isTracked = false;
-
-            for (TrackedWaypoint newWaypoint : waypoints) {
-                if (oldWaypoint.getSource().equals(newWaypoint.getSource())) {
-                    isTracked = true;
-                }
-            }
-
-            if (!isTracked) {
-                player.networkHandler.getWaypointHandler().onUntrack(oldWaypoint);
+        for (TrackedWaypoint newWaypoint : WAYPOINTS.values()) {
+            if (oldWaypoints.containsKey(newWaypoint.getSource())) {
+                waypointHandler.onUpdate(newWaypoint);
+            } else {
+                waypointHandler.onTrack(newWaypoint);
             }
         }
 
-        PREVIOUS_WAYPOINTS.clear();
-        PREVIOUS_WAYPOINTS.addAll(waypoints);
+        for (TrackedWaypoint oldWaypoint : oldWaypoints.values()) {
+            if (!WAYPOINTS.containsKey(oldWaypoint.getSource())) {
+                waypointHandler.onUntrack(oldWaypoint);
+            }
+        }
     }
 
     public static void init() {

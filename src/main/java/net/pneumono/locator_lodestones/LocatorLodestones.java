@@ -1,7 +1,9 @@
 package net.pneumono.locator_lodestones;
 
 import net.fabricmc.api.ClientModInitializer;
+
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.waypoint.WaypointStyle;
@@ -28,12 +30,8 @@ public class LocatorLodestones implements ClientModInitializer {
 	public void onInitializeClient() {
 		LOGGER.info("Initializing Locator Lodestones");
 		ConfigManager.initConfig();
-		WaypointTracking.init();
-		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			if (client.world != null && !client.isPaused()) {
-				WaypointTracking.updateWaypoints(client.player, false);
-			}
-		});
+		ClientTickEvents.END_CLIENT_TICK.register(client -> WaypointTracking.updateWaypoints(client.player));
+		ServerLifecycleEvents.SERVER_STARTING.register(server -> WaypointTracking.resetWaypoints());
 	}
 
 	private static RegistryKey<WaypointStyle> style(String path) {
