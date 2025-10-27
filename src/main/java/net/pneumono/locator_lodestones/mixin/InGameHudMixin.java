@@ -1,13 +1,17 @@
 package net.pneumono.locator_lodestones.mixin;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.client.gui.hud.bar.Bar;
+import net.pneumono.locator_lodestones.WaypointRendering;
 import net.pneumono.locator_lodestones.config.ConfigManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(InGameHud.class)
@@ -26,4 +30,16 @@ public abstract class InGameHudMixin {
             info.setReturnValue(InGameHud.BarType.LOCATOR);
         }
     }
+
+    @Redirect(
+        method = "renderMainHud(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/gui/hud/bar/Bar;drawExperienceLevel(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/font/TextRenderer;I)V"
+        )
+    )
+    private void conditionalDrawExperienceLevel(DrawContext context, net.minecraft.client.font.TextRenderer textRenderer, int level) {
+        if (WaypointRendering.shouldDrawExperienceLevel())
+            Bar.drawExperienceLevel(context, textRenderer, level);
+    }    
 }

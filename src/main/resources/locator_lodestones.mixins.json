@@ -13,7 +13,6 @@
         "InGameHudMixin",
         "LocatorBarMixin",
         "ClientWaypointHandlerMixin",
-        "BarMixin",
         "PlayerInventoryMixin"
     ]
 }
