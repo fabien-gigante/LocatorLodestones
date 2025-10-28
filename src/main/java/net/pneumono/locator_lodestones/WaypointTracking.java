@@ -134,6 +134,11 @@ public class WaypointTracking {
 
     private static List<TrackedWaypoint> getWaypointsFromStack(PlayerEntity player, RegistryKey<World> dimension, ItemStack stack) {
         List<TrackedWaypoint> waypoints = new ArrayList<>();
+        //? if >=1.21.9 {
+        World world = player.getEntityWorld();
+        //?} else {
+        /*World world = player.getWorld();
+        *///?}
 
         if (ConfigManager.getConfig().showRecovery()) {
             Optional<GlobalPos> lastDeathPos = player.getLastDeathPos();
@@ -158,7 +163,11 @@ public class WaypointTracking {
         }
 
         if (ConfigManager.getConfig().showSpawn() && stack.isOf(Items.COMPASS) && trackerComponent == null) {
-            GlobalPos pos = player.getEntityWorld().getSpawnPoint().globalPos();
+            //? if >=1.21.9 {
+            GlobalPos pos = world.getSpawnPoint().globalPos();
+            //?} else {
+            /*GlobalPos pos = new GlobalPos(World.OVERWORLD, world.getSpawnPos());
+            *///?}
             if (pos.dimension() == dimension && pos.pos() != null) {
                 Integer color = ColorHandler.getColor(stack).orElse(ConfigManager.getConfig().spawnColor().getColorWithAlpha());
                 TrackedWaypoint waypoint = new NamedWaypoint("spawn_" + pos, LocatorLodestones.SPAWN_STYLE, color, pos.pos(), getText(stack));
@@ -167,7 +176,7 @@ public class WaypointTracking {
         }
 
         if (ConfigManager.getConfig().showMaps() && stack.isOf(Items.FILLED_MAP)) {
-            MapState mapState = FilledMapItem.getMapState(stack, player.getEntityWorld());
+            MapState mapState = FilledMapItem.getMapState(stack, world);
             if (mapState != null && mapState.dimension == dimension) {
                 MapIdComponent mapIdComponent = stack.get(DataComponentTypes.MAP_ID);
                 MapDecorationsComponent mapDecorationsComponent = stack.get(DataComponentTypes.MAP_DECORATIONS);

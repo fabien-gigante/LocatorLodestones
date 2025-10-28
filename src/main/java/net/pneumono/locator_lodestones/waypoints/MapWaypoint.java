@@ -14,7 +14,9 @@ import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
+//? if >=1.21.9 {
 import net.minecraft.world.waypoint.EntityTickProgress;
+//?}
 import net.minecraft.world.waypoint.TrackedWaypoint;
 import net.minecraft.world.waypoint.Waypoint;
 import net.minecraft.world.waypoint.WaypointStyle;
