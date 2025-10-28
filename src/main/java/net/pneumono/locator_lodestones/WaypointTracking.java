@@ -54,7 +54,6 @@ public class WaypointTracking {
         getWaypointsFromPlayer(player).forEach(waypoint -> WAYPOINTS.put(waypoint.getSource(), waypoint));
 
         ClientWaypointHandler waypointHandler = player.networkHandler.getWaypointHandler();
-
         for (TrackedWaypoint newWaypoint : WAYPOINTS.values()) {
             if (oldWaypoints.containsKey(newWaypoint.getSource())) {
                 waypointHandler.onUpdate(newWaypoint);
@@ -62,7 +61,6 @@ public class WaypointTracking {
                 waypointHandler.onTrack(newWaypoint);
             }
         }
-
         for (TrackedWaypoint oldWaypoint : oldWaypoints.values()) {
             if (!WAYPOINTS.containsKey(oldWaypoint.getSource())) {
                 waypointHandler.onUntrack(oldWaypoint);
@@ -112,8 +110,8 @@ public class WaypointTracking {
         List<TrackedWaypoint> waypoints = new ArrayList<>();
         List<ItemStack> stacks = getPlayerStacks(player);
 
-        if (ConfigManager.getConfig().showCompassDial() &&
-                stacks.stream().anyMatch(stack -> stack.isOf(Items.COMPASS) || stack.isOf(Items.RECOVERY_COMPASS)))
+        if (ConfigManager.getConfig().showCompassDial()
+                && stacks.stream().anyMatch(stack -> stack.isOf(Items.COMPASS) || stack.isOf(Items.RECOVERY_COMPASS)))
             waypoints.addAll(COMPASS_DIAL_WAYPOINTS);
 
         //? if >=1.21.9 {
