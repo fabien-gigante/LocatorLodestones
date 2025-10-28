@@ -11,7 +11,7 @@ public record Config(
     public static final Config DEFAULT = new Config(
             true, true, true, false, true,
             true, false, false, false, true,
-            new ColorProvider(null), new ColorProvider(0xBCE0EB), new ColorProvider(0x8ED1B3), new ColorProvider(0x879E7B)
+            new ColorProvider(null), new ColorProvider(0xBCE0EB), new ColorProvider(0x6BCF6D), new ColorProvider(0x879E7B)
     );
 
     public static final Codec<Config> CODEC = RecordCodecBuilder.create(instance -> instance.group(
