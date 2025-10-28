@@ -16,12 +16,12 @@ import net.minecraft.world.waypoint.Waypoint;
 import net.minecraft.world.waypoint.WaypointStyle;
 import net.pneumono.locator_lodestones.config.ConfigManager;
 
-public class CompassDialWaypoint extends TrackedWaypoint.Azimuth {
-    public CompassDialWaypoint(String source, Config config, float azimuth) {
+public class DialWaypoint extends TrackedWaypoint.Azimuth {
+    protected DialWaypoint(String source, Config config, float azimuth) {
         super(Either.right(source), config, bufFromFloat(azimuth));
     }
     
-    public CompassDialWaypoint(String source, RegistryKey<WaypointStyle> style, float azimuth) {
+    public DialWaypoint(String source, RegistryKey<WaypointStyle> style, float azimuth) {
         this(source, configFromStyle(style), azimuth);
     }
 

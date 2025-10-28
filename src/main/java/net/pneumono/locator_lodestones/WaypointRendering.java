@@ -11,9 +11,11 @@ import net.minecraft.util.Colors;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.waypoint.TrackedWaypoint;
+import net.minecraft.world.waypoint.Waypoint;
 import net.pneumono.locator_lodestones.config.ConfigManager;
-import net.pneumono.locator_lodestones.waypoints.CompassDialWaypoint;
-import net.pneumono.locator_lodestones.waypoints.NamedPositionalWaypoint;
+import net.pneumono.locator_lodestones.waypoints.DialWaypoint;
+import net.pneumono.locator_lodestones.waypoints.MapWaypoint;
+import net.pneumono.locator_lodestones.waypoints.NamedWaypoint;
 
 import java.util.Comparator;
 import java.util.Optional;
@@ -61,9 +63,9 @@ public class WaypointRendering {
     }
 
     protected static void renderNames(MinecraftClient client, DrawContext context, RenderTickCounter tickCounter, int centerY) {
-        Stream<TrackedWaypoint> waypoints = WaypointTracking.getWaypoints().stream().filter(waypoint -> waypoint instanceof NamedPositionalWaypoint);
+        Stream<TrackedWaypoint> waypoints = WaypointTracking.getWaypoints().stream().filter(waypoint -> waypoint instanceof NamedWaypoint);
         WaypointMatch best = getBestWaypoint(client, tickCounter, waypoints);
-        if (!(best instanceof WaypointMatch(NamedPositionalWaypoint waypoint, double yaw)) ||  Math.abs(yaw) > 60) return;
+        if (!(best instanceof WaypointMatch(NamedWaypoint waypoint, double yaw)) ||  Math.abs(yaw) > 60) return;
 
         Optional<Text> textOptional = waypoint.getName();
         if (textOptional.isPresent()) {
@@ -84,12 +86,12 @@ public class WaypointRendering {
     protected static void renderDistance(MinecraftClient client, DrawContext context, RenderTickCounter tickCounter, int centerY) {
         ClientWaypointHandler handler = client.player.networkHandler.getWaypointHandler();
         if (!(handler instanceof IWaypointAccessor accessor)) return;
-        Stream<TrackedWaypoint> waypoints = accessor.getWaypointsUnsorted().stream().filter(waypoint -> !(waypoint instanceof CompassDialWaypoint));
+        Stream<TrackedWaypoint> waypoints = accessor.getWaypointsUnsorted().stream().filter(waypoint -> !(waypoint instanceof DialWaypoint));
         WaypointMatch best = getBestWaypoint(client, tickCounter, waypoints);
-        if (!(best instanceof WaypointMatch(TrackedWaypoint waypoint, double yaw)) ||  Math.abs(yaw) > 10) return;
+        if (best.waypoint == null || Math.abs(best.yaw) > 10) return;
 
         distanceRendered = true;
-        double dist = Math.sqrt(waypoint.squaredDistanceTo(client.player));
+        double dist = Math.sqrt(best.waypoint.squaredDistanceTo(client.player));
         String label;
         if (dist >= 10000) label = Math.round(dist/1000) + "k";
         else if (dist >= 1000) label = Math.round(dist/100)/10f + "k";
@@ -103,18 +105,16 @@ public class WaypointRendering {
         context.drawText(client.textRenderer, label, x+1, y, Colors.BLACK, false);
         context.drawText(client.textRenderer, label, x, y-1, Colors.BLACK, false);
         context.drawText(client.textRenderer, label, x, y+1, Colors.BLACK, false);
-        context.drawText(client.textRenderer, label, x, y, getColor(waypoint), false);
+        context.drawText(client.textRenderer, label, x, y, getColor(best.waypoint), false);
     }
 
     private static int getColor(TrackedWaypoint waypoint) {
-        return waypoint.getConfig().color
-            .orElseGet(
-                () -> waypoint.getSource()
-                    .map(
-                        uuid -> ColorHelper.withBrightness(ColorHelper.withAlpha(255, uuid.hashCode()), 0.9F),
-                        name -> ColorHelper.withBrightness(ColorHelper.withAlpha(255, name.hashCode()), 0.9F)
-                    )
-            );        
+        Waypoint.Config config = waypoint.getConfig();
+        Optional<Integer> color = config instanceof MapWaypoint.Config mapConfig ? mapConfig.textColor : config.color;
+        return color.orElseGet( () -> {
+            int hash = waypoint.getSource().map(uuid -> uuid.hashCode(), name -> name.hashCode());
+            return ColorHelper.withBrightness(ColorHelper.withAlpha(255, hash), 0.9F);
+        });
     }
 
     public static boolean shouldDrawExperienceLevel() { return !distanceRendered; }

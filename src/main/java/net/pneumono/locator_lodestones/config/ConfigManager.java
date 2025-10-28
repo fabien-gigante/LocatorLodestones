@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.text.Text;
 import net.pneumono.locator_lodestones.LocatorLodestones;
+import net.pneumono.locator_lodestones.WaypointTracking;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -27,6 +28,7 @@ public class ConfigManager {
                 ClientCommandManager.literal(LocatorLodestones.id("reloadconfig").toString()).executes(context -> {
                     reloadConfig();
                     context.getSource().sendFeedback(Text.translatable("locator_lodestones.reload"));
+                    WaypointTracking.markWaypointsDirty();
                     return 1;
                 })
         ));

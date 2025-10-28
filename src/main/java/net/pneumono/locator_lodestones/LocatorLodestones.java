@@ -4,7 +4,11 @@ import net.fabricmc.api.ClientModInitializer;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.waypoint.WaypointStyle;
 import net.minecraft.world.waypoint.WaypointStyles;
@@ -27,6 +31,7 @@ public class LocatorLodestones implements ClientModInitializer {
 	public static final RegistryKey<WaypointStyle> COMPASS_DIVISION_SMALL_STYLE = style("compass_division_small");
 	public static final List<RegistryKey<WaypointStyle>> COMPASS_CARDINAL_STYLE = List.of( style("compass_south"), style("compass_west"), style("compass_north"), style("compass_east") );
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onInitializeClient() {
 		LOGGER.info("Initializing Locator Lodestones");
@@ -34,9 +39,15 @@ public class LocatorLodestones implements ClientModInitializer {
 		WaypointTracking.init();
 		ClientTickEvents.END_CLIENT_TICK.register(client -> WaypointTracking.updateWaypoints(client.player));
 		ServerLifecycleEvents.SERVER_STARTING.register(server -> WaypointTracking.resetWaypoints());
+		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
+            @Override
+            public Identifier getFabricId() { return id("waypoint_style_assets_listener"); }
+			@Override
+			public void reload(ResourceManager manager) { MapWaypointStyleAssets.reload(); }
+		});
 	}
 
-	private static RegistryKey<WaypointStyle> style(String path) {
+	public static RegistryKey<WaypointStyle> style(String path) {
 		return RegistryKey.of(WaypointStyles.REGISTRY, id(path));
 	}
 

@@ -6,10 +6,14 @@ import net.minecraft.client.world.ClientWaypointHandler;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.component.type.LodestoneTrackerComponent;
+import net.minecraft.component.type.MapDecorationsComponent;
+import net.minecraft.component.type.MapIdComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.map.MapState;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
@@ -18,8 +22,9 @@ import net.minecraft.world.World;
 import net.minecraft.world.waypoint.TrackedWaypoint;
 import net.pneumono.locator_lodestones.config.Config;
 import net.pneumono.locator_lodestones.config.ConfigManager;
-import net.pneumono.locator_lodestones.waypoints.CompassDialWaypoint;
-import net.pneumono.locator_lodestones.waypoints.NamedPositionalWaypoint;
+import net.pneumono.locator_lodestones.waypoints.DialWaypoint;
+import net.pneumono.locator_lodestones.waypoints.MapWaypoint;
+import net.pneumono.locator_lodestones.waypoints.NamedWaypoint;
 
 import java.util.*;
 
@@ -45,7 +50,8 @@ public class WaypointTracking {
     }
 
     public static void updateWaypoints(ClientPlayerEntity player) {
-        if (!dirty || player == null || (lastUpdateTime + UPDATE_COOLDOWN > player.age && lastUpdateTime < player.age)) return;
+        if (!dirty || player == null || !player.isLoaded()) return;
+        if (lastUpdateTime + UPDATE_COOLDOWN > player.age && lastUpdateTime < player.age) return;
         lastUpdateTime = player.age;
         dirty = false;
 
@@ -72,7 +78,7 @@ public class WaypointTracking {
         for(int azimuth = 0; azimuth < 360; azimuth += 15) {
             var style = azimuth % 90 == 0 ? LocatorLodestones.COMPASS_CARDINAL_STYLE.get(azimuth / 90) :
                         azimuth % 45 == 0 ? LocatorLodestones.COMPASS_DIVISION_STYLE : LocatorLodestones.COMPASS_DIVISION_SMALL_STYLE;
-            COMPASS_DIAL_WAYPOINTS.add(new CompassDialWaypoint("dial_" + azimuth, style, (float)(azimuth * Math.PI / 180)));
+            COMPASS_DIAL_WAYPOINTS.add(new DialWaypoint("dial_" + azimuth, style, (float)(azimuth * Math.PI / 180)));
         }
     }
 
@@ -110,9 +116,11 @@ public class WaypointTracking {
         List<TrackedWaypoint> waypoints = new ArrayList<>();
         List<ItemStack> stacks = getPlayerStacks(player);
 
-        if (ConfigManager.getConfig().showCompassDial()
-                && stacks.stream().anyMatch(stack -> stack.isOf(Items.COMPASS) || stack.isOf(Items.RECOVERY_COMPASS)))
-            waypoints.addAll(COMPASS_DIAL_WAYPOINTS);
+        if (ConfigManager.getConfig().showCompassDial()) {
+            boolean withMaps = ConfigManager.getConfig().showMaps();
+            if (stacks.stream().anyMatch(stack -> stack.isOf(Items.COMPASS) || stack.isOf(Items.RECOVERY_COMPASS) || (withMaps && stack.isOf(Items.FILLED_MAP))))
+                waypoints.addAll(COMPASS_DIAL_WAYPOINTS);
+        }
 
         //? if >=1.21.9 {
         RegistryKey<World> dimension = player.getEntityWorld().getRegistryKey();
@@ -133,7 +141,7 @@ public class WaypointTracking {
                 GlobalPos pos = lastDeathPos.get();
                 if (pos.dimension() == dimension && pos.pos() != null) {
                     Integer color = ColorHandler.getColor(stack).orElse(ConfigManager.getConfig().recoveryColor().getColorWithAlpha());
-                    TrackedWaypoint waypoint = new NamedPositionalWaypoint("death_" + pos, LocatorLodestones.DEATH_STYLE, color, pos.pos(), getText(stack));
+                    TrackedWaypoint waypoint = new NamedWaypoint("death_" + pos, LocatorLodestones.DEATH_STYLE, color, pos.pos(), getText(stack));
                     waypoints.add(waypoint);
                 }
             }
@@ -144,7 +152,7 @@ public class WaypointTracking {
             GlobalPos pos = trackerComponent.target().get();
             if (pos.dimension() == dimension && pos.pos() != null) {
                 Integer color = ColorHandler.getColor(stack).orElse(ConfigManager.getConfig().lodestoneColor().getColorWithAlpha());
-                TrackedWaypoint waypoint = new NamedPositionalWaypoint("lodestone_" + pos, LocatorLodestones.LODESTONE_STYLE, color, pos.pos(), getText(stack));
+                TrackedWaypoint waypoint = new NamedWaypoint("lodestone_" + pos, LocatorLodestones.LODESTONE_STYLE, color, pos.pos(), getText(stack));
                 waypoints.add(waypoint);
             }
         }
@@ -153,9 +161,23 @@ public class WaypointTracking {
             GlobalPos pos = player.getEntityWorld().getSpawnPoint().globalPos();
             if (pos.dimension() == dimension && pos.pos() != null) {
                 Integer color = ColorHandler.getColor(stack).orElse(ConfigManager.getConfig().spawnColor().getColorWithAlpha());
-                TrackedWaypoint waypoint = new NamedPositionalWaypoint("spawn_" + pos, LocatorLodestones.SPAWN_STYLE, color, pos.pos(), getText(stack));
+                TrackedWaypoint waypoint = new NamedWaypoint("spawn_" + pos, LocatorLodestones.SPAWN_STYLE, color, pos.pos(), getText(stack));
                 waypoints.add(waypoint);
             }
+        }
+
+        if (ConfigManager.getConfig().showMaps() && stack.isOf(Items.FILLED_MAP)) {
+            MapState mapState = FilledMapItem.getMapState(stack, player.getEntityWorld());
+            if (mapState != null && mapState.dimension == dimension) {
+                MapIdComponent mapIdComponent = stack.get(DataComponentTypes.MAP_ID);
+                MapDecorationsComponent mapDecorationsComponent = stack.get(DataComponentTypes.MAP_DECORATIONS);
+                if (mapIdComponent != null && mapDecorationsComponent != null) {
+                    mapDecorationsComponent.decorations().forEach((key, deco) -> {
+                        TrackedWaypoint waypoint = new MapWaypoint("map_" + mapIdComponent.id() + "_" + key, deco);
+                        waypoints.add(waypoint);
+                    });
+                }
+            }   
         }
 
         return waypoints;

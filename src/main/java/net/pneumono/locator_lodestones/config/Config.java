@@ -4,12 +4,12 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public record Config(
-        boolean tabForcesLocatorBar, boolean tabShowsNames, boolean showRecovery, boolean showSpawn, boolean showBundled,
+        boolean tabForcesLocatorBar, boolean tabShowsNames, boolean showRecovery, boolean showSpawn, boolean showMaps, boolean showBundled,
         boolean showInSpectator, HoldingLocation holdingLocation, boolean showCompassDial, boolean showDistance, boolean colorCustomization,
         ColorProvider lodestoneColor, ColorProvider recoveryColor, ColorProvider spawnColor, ColorProvider dialColor) {
 
     public static final Config DEFAULT = new Config(
-            true, true, true, false, true,
+            true, true, true, false, false, true,
             true, HoldingLocation.INVENTORY, false, false, true,
             new ColorProvider(null), new ColorProvider(0xBCE0EB), new ColorProvider(0x6BCF6D), new ColorProvider(0x879E7B)
     );
@@ -19,6 +19,7 @@ public record Config(
             Codec.BOOL.fieldOf("tab_shows_names").forGetter(Config::tabShowsNames),
             Codec.BOOL.fieldOf("show_recovery_compasses").forGetter(Config::showRecovery),
             Codec.BOOL.fieldOf("show_spawn").forGetter(Config::showSpawn),
+            Codec.BOOL.fieldOf("show_maps").forGetter(Config::showMaps),
             Codec.BOOL.fieldOf("show_bundled_compasses").forGetter(Config::showBundled),
             Codec.BOOL.fieldOf("show_in_spectator").forGetter(Config::showInSpectator),
             HoldingLocation.CODEC.fieldOf("holding_location").forGetter(Config::holdingLocation),
