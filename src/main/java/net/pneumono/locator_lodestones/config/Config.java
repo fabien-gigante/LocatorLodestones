@@ -4,13 +4,13 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public record Config(
-            boolean tabForcesLocatorBar, boolean tabShowsNames, boolean showRecovery, boolean showSpawn, boolean showBundled,
-            boolean showInSpectator, boolean showHotbarOnly, boolean showCompassDial, boolean showDistance, boolean colorCustomization, 
-            ColorProvider lodestoneColor, ColorProvider recoveryColor, ColorProvider spawnColor, ColorProvider dialColor) {
+        boolean tabForcesLocatorBar, boolean tabShowsNames, boolean showRecovery, boolean showSpawn, boolean showBundled,
+        boolean showInSpectator, HoldingLocation holdingLocation, boolean showCompassDial, boolean showDistance, boolean colorCustomization,
+        ColorProvider lodestoneColor, ColorProvider recoveryColor, ColorProvider spawnColor, ColorProvider dialColor) {
 
     public static final Config DEFAULT = new Config(
             true, true, true, false, true,
-            true, false, false, false, true,
+            true, HoldingLocation.INVENTORY, false, false, true,
             new ColorProvider(null), new ColorProvider(0xBCE0EB), new ColorProvider(0x6BCF6D), new ColorProvider(0x879E7B)
     );
 
@@ -21,7 +21,7 @@ public record Config(
             Codec.BOOL.fieldOf("show_spawn").forGetter(Config::showSpawn),
             Codec.BOOL.fieldOf("show_bundled_compasses").forGetter(Config::showBundled),
             Codec.BOOL.fieldOf("show_in_spectator").forGetter(Config::showInSpectator),
-            Codec.BOOL.fieldOf("show_hotbar_only").forGetter(Config::showHotbarOnly),
+            HoldingLocation.CODEC.fieldOf("holding_location").forGetter(Config::holdingLocation),
             Codec.BOOL.fieldOf("show_compass_dial").forGetter(Config::showCompassDial),
             Codec.BOOL.fieldOf("show_distance").forGetter(Config::showDistance),
             Codec.BOOL.fieldOf("color_customization").forGetter(Config::colorCustomization),
@@ -30,4 +30,12 @@ public record Config(
             ColorProvider.CODEC.fieldOf("spawn_color").forGetter(Config::spawnColor),
             ColorProvider.CODEC.fieldOf("dial_color").forGetter(Config::dialColor)
     ).apply(instance, Config::new));
+
+    public enum HoldingLocation {
+        INVENTORY, HOTBAR, HANDS;
+        public static final Codec<HoldingLocation> CODEC = Codec.STRING.xmap(
+                str -> HoldingLocation.valueOf(str.toUpperCase()),
+                loc -> loc.name().toLowerCase()
+        );
+    }
 }

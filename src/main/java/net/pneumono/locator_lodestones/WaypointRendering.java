@@ -53,6 +53,7 @@ public class WaypointRendering {
     }
 
     public static void render(MinecraftClient client, DrawContext context, RenderTickCounter tickCounter, int centerY) {
+        distanceRendered = false;
         if (ConfigManager.getConfig().showDistance())
             renderDistance(client, context, tickCounter, centerY);
         if (ConfigManager.getConfig().tabShowsNames() && client.options.playerListKey.isPressed())
@@ -81,7 +82,6 @@ public class WaypointRendering {
 
 
     protected static void renderDistance(MinecraftClient client, DrawContext context, RenderTickCounter tickCounter, int centerY) {
-        distanceRendered = false;        
         ClientWaypointHandler handler = client.player.networkHandler.getWaypointHandler();
         if (!(handler instanceof IWaypointAccessor accessor)) return;
         Stream<TrackedWaypoint> waypoints = accessor.getWaypointsUnsorted().stream().filter(waypoint -> !(waypoint instanceof CompassDialWaypoint));
@@ -97,7 +97,7 @@ public class WaypointRendering {
         TextRenderer textRenderer = client.textRenderer;
         int width = textRenderer.getWidth(label);
         int x = Math.round((context.getScaledWindowWidth() - width) / 2);
-        int y = centerY - 10; // - (client.interactionManager.hasExperienceBar() ? 16 : 10);
+        int y = centerY - 10;
 
         context.drawText(client.textRenderer, label, x-1, y, Colors.BLACK, false);
         context.drawText(client.textRenderer, label, x+1, y, Colors.BLACK, false);

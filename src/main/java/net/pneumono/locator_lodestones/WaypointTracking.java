@@ -16,6 +16,7 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.World;
 import net.minecraft.world.waypoint.TrackedWaypoint;
+import net.pneumono.locator_lodestones.config.Config;
 import net.pneumono.locator_lodestones.config.ConfigManager;
 import net.pneumono.locator_lodestones.waypoints.CompassDialWaypoint;
 import net.pneumono.locator_lodestones.waypoints.NamedPositionalWaypoint;
@@ -23,7 +24,7 @@ import net.pneumono.locator_lodestones.waypoints.NamedPositionalWaypoint;
 import java.util.*;
 
 public class WaypointTracking {
-    private static int UPDATE_COOLDOWN = 20;
+    private static int UPDATE_COOLDOWN = 10;
     private static final Map<Either<UUID, String>, TrackedWaypoint> WAYPOINTS = new HashMap<>();
     private static final List<TrackedWaypoint> COMPASS_DIAL_WAYPOINTS = new ArrayList<>();
     private static boolean dirty = false;
@@ -70,50 +71,63 @@ public class WaypointTracking {
     }
 
     public static void init() {
-        if (ConfigManager.getConfig().showCompassDial()) {
-            for(int azimuth = 0; azimuth < 360; azimuth += 15) {
-                var style = azimuth % 90 == 0 ? LocatorLodestones.COMPASS_CARDINAL_STYLE.get(azimuth / 90) :
-                            azimuth % 45 == 0 ? LocatorLodestones.COMPASS_DIVISION_STYLE : LocatorLodestones.COMPASS_DIVISION_SMALL_STYLE;
-                COMPASS_DIAL_WAYPOINTS.add(new CompassDialWaypoint("dial_" + azimuth, style, (float)(azimuth * Math.PI / 180)));
-            }
+        for(int azimuth = 0; azimuth < 360; azimuth += 15) {
+            var style = azimuth % 90 == 0 ? LocatorLodestones.COMPASS_CARDINAL_STYLE.get(azimuth / 90) :
+                        azimuth % 45 == 0 ? LocatorLodestones.COMPASS_DIVISION_STYLE : LocatorLodestones.COMPASS_DIVISION_SMALL_STYLE;
+            COMPASS_DIAL_WAYPOINTS.add(new CompassDialWaypoint("dial_" + azimuth, style, (float)(azimuth * Math.PI / 180)));
         }
     }
 
     private static List<ItemStack> getPlayerStacks(PlayerEntity player) {
         List<ItemStack> stacks = new ArrayList<>();
-        if (ConfigManager.getConfig().showHotbarOnly()) {
-            for (int slot=0; slot < PlayerInventory.getHotbarSize(); slot++)
-                stacks.add(player.getInventory().getStack(slot));
-        }
-        else {
-            DefaultedList<ItemStack> mainStacks = player.getInventory().getMainStacks();
-            if (mainStacks != null)
-                stacks.addAll(player.getInventory().getMainStacks());
+        switch(ConfigManager.getConfig().holdingLocation()) {
+            case Config.HoldingLocation.HANDS:
+                ItemStack selectedStack = player.getInventory().getSelectedStack();
+                if (selectedStack != null) stacks.add(selectedStack);
+                break;
+            case Config.HoldingLocation.HOTBAR: 
+                for (int slot = 0; slot < PlayerInventory.getHotbarSize(); slot++) {
+                    ItemStack stack = player.getInventory().getStack(slot);
+                    if (stack != null) stacks.add(stack);
+                }
+                break;
+            default:
+                DefaultedList<ItemStack> mainStacks = player.getInventory().getMainStacks();
+                if (mainStacks != null) stacks.addAll(mainStacks);
         }
         ItemStack offHandStack = player.getOffHandStack();
-        if (offHandStack != null)
-            stacks.add(player.getOffHandStack());
+        if (offHandStack != null) stacks.add(offHandStack);
+
+        if (ConfigManager.getConfig().showBundled()) {
+            ListIterator<ItemStack> it = stacks.listIterator();
+            while (it.hasNext()) {
+                BundleContentsComponent contentsComponent = it.next().get(DataComponentTypes.BUNDLE_CONTENTS);
+                if (contentsComponent != null) contentsComponent.stream().forEach(stack -> it.add(stack));
+            }
+        }
         return stacks;
     }
 
     private static List<TrackedWaypoint> getWaypointsFromPlayer(PlayerEntity player) {
         List<TrackedWaypoint> waypoints = new ArrayList<>();
-        for (ItemStack stack : getPlayerStacks(player)) {
-            //? if >=1.21.9 {
-            RegistryKey<World> dimension = player.getEntityWorld().getRegistryKey();
-            //?} else {
-            /*RegistryKey<World> dimension = player.getWorld().getRegistryKey();
-            *///?}
+        List<ItemStack> stacks = getPlayerStacks(player);
+
+        if (ConfigManager.getConfig().showCompassDial() &&
+                stacks.stream().anyMatch(stack -> stack.isOf(Items.COMPASS) || stack.isOf(Items.RECOVERY_COMPASS)))
+            waypoints.addAll(COMPASS_DIAL_WAYPOINTS);
+
+        //? if >=1.21.9 {
+        RegistryKey<World> dimension = player.getEntityWorld().getRegistryKey();
+        //?} else {
+        /*RegistryKey<World> dimension = player.getWorld().getRegistryKey();
+        *///?}
+        for (ItemStack stack : stacks)
             waypoints.addAll(getWaypointsFromStack(player, dimension, stack));
-        }
         return waypoints;
     }
 
     private static List<TrackedWaypoint> getWaypointsFromStack(PlayerEntity player, RegistryKey<World> dimension, ItemStack stack) {
         List<TrackedWaypoint> waypoints = new ArrayList<>();
-
-        if (stack.isOf(Items.COMPASS) || stack.isOf(Items.RECOVERY_COMPASS))
-            waypoints.addAll(COMPASS_DIAL_WAYPOINTS);
 
         if (ConfigManager.getConfig().showRecovery()) {
             Optional<GlobalPos> lastDeathPos = player.getLastDeathPos();
@@ -143,15 +157,6 @@ public class WaypointTracking {
                 Integer color = ColorHandler.getColor(stack).orElse(ConfigManager.getConfig().spawnColor().getColorWithAlpha());
                 TrackedWaypoint waypoint = new NamedPositionalWaypoint("spawn_" + pos, LocatorLodestones.SPAWN_STYLE, color, pos.pos(), getText(stack));
                 waypoints.add(waypoint);
-            }
-        }
-
-        if (ConfigManager.getConfig().showBundled()) {
-            BundleContentsComponent contentsComponent = stack.get(DataComponentTypes.BUNDLE_CONTENTS);
-            if (contentsComponent != null) {
-                contentsComponent.stream().forEach(
-                        bundledStack -> waypoints.addAll(getWaypointsFromStack(player, dimension, bundledStack))
-                );
             }
         }
 
