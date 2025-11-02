@@ -11,7 +11,6 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.text.Text;
 import net.pneumono.locator_lodestones.LocatorLodestones;
-import net.pneumono.locator_lodestones.WaypointTracking;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -19,16 +18,18 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.jetbrains.annotations.Nullable;
+
 public class ConfigManager {
     private static final Path CONFIG_FILE = FabricLoader.getInstance().getConfigDir().resolve(LocatorLodestones.MOD_ID + ".json");
     private static Config CONFIG = Config.DEFAULT;
 
-    public static void initConfig() {
+    public static void initConfig(@Nullable Runnable reset) {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(
                 ClientCommandManager.literal(LocatorLodestones.id("reloadconfig").toString()).executes(context -> {
                     reloadConfig();
                     context.getSource().sendFeedback(Text.translatable("locator_lodestones.reload"));
-                    WaypointTracking.markWaypointsDirty();
+                    if (reset != null) reset.run();
                     return 1;
                 })
         ));

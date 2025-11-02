@@ -63,7 +63,8 @@ public class WaypointRendering {
     }
 
     protected static void renderNames(MinecraftClient client, DrawContext context, RenderTickCounter tickCounter, int centerY) {
-        Stream<TrackedWaypoint> waypoints = WaypointTracking.getWaypoints().stream().filter(waypoint -> waypoint instanceof NamedWaypoint);
+        WaypointTracker waypointTracker = LocatorLodestones.waypointTracker;
+        Stream<TrackedWaypoint> waypoints = waypointTracker.getWaypoints().stream().filter(waypoint -> waypoint instanceof NamedWaypoint);
         WaypointMatch best = getBestWaypoint(client, tickCounter, waypoints);
         if (!(best instanceof WaypointMatch(NamedWaypoint waypoint, double yaw)) ||  Math.abs(yaw) > 60) return;
 

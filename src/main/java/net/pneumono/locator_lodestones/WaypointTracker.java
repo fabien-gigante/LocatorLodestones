@@ -1,26 +1,24 @@
 package net.pneumono.locator_lodestones;
 
 import com.mojang.datafixers.util.Either;
+
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWaypointHandler;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.component.type.LodestoneTrackerComponent;
 import net.minecraft.component.type.MapDecorationsComponent;
 import net.minecraft.component.type.MapIdComponent;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.map.MapState;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.World;
 import net.minecraft.world.waypoint.TrackedWaypoint;
-import net.pneumono.locator_lodestones.config.Config;
 import net.pneumono.locator_lodestones.config.ConfigManager;
 import net.pneumono.locator_lodestones.waypoints.DialWaypoint;
 import net.pneumono.locator_lodestones.waypoints.MapWaypoint;
@@ -28,32 +26,23 @@ import net.pneumono.locator_lodestones.waypoints.NamedWaypoint;
 
 import java.util.*;
 
-public class WaypointTracking {
-    private static int UPDATE_COOLDOWN = 10;
-    private static final Map<Either<UUID, String>, TrackedWaypoint> WAYPOINTS = new HashMap<>();
+public class WaypointTracker extends AbstractTracker {
     private static final List<TrackedWaypoint> COMPASS_DIAL_WAYPOINTS = new ArrayList<>();
-    private static boolean dirty = false;
-    private static long lastUpdateTime = 0;
+    private final Map<Either<UUID, String>, TrackedWaypoint> WAYPOINTS = new HashMap<>();
 
-    public static Collection<TrackedWaypoint> getWaypoints() {
+    public Collection<TrackedWaypoint> getWaypoints() {
         return WAYPOINTS.values();
     }
 
-    public static void markWaypointsDirty() {
-        dirty = true;
-    }
-
-    public static void resetWaypoints() {
+    @Override
+    public void reset() {
+        super.reset();
         WAYPOINTS.clear();
-        lastUpdateTime = 0;
-        markWaypointsDirty();
     }
 
-    public static void updateWaypoints(ClientPlayerEntity player) {
-        if (!dirty || player == null || !player.isLoaded()) return;
-        if (lastUpdateTime + UPDATE_COOLDOWN > player.age && lastUpdateTime < player.age) return;
-        lastUpdateTime = player.age;
-        dirty = false;
+    @Override
+    public void update(MinecraftClient client) {
+        ClientPlayerEntity player = client.player;
 
         Map<Either<UUID, String>, TrackedWaypoint> oldWaypoints = new HashMap<>(WAYPOINTS);
         WAYPOINTS.clear();
@@ -74,7 +63,9 @@ public class WaypointTracking {
         }
     }
 
-    public static void init() {
+    @Override
+    public void init() {
+        super.init();
         for(int azimuth = 0; azimuth < 360; azimuth += 15) {
             var style = azimuth % 90 == 0 ? LocatorLodestones.COMPASS_CARDINAL_STYLE.get(azimuth / 90) :
                         azimuth % 45 == 0 ? LocatorLodestones.COMPASS_DIVISION_STYLE : LocatorLodestones.COMPASS_DIVISION_SMALL_STYLE;
@@ -83,33 +74,7 @@ public class WaypointTracking {
     }
 
     private static List<ItemStack> getPlayerStacks(PlayerEntity player) {
-        List<ItemStack> stacks = new ArrayList<>();
-        switch(ConfigManager.getConfig().holdingLocation()) {
-            case Config.HoldingLocation.HANDS:
-                ItemStack selectedStack = player.getInventory().getSelectedStack();
-                if (selectedStack != null) stacks.add(selectedStack);
-                break;
-            case Config.HoldingLocation.HOTBAR: 
-                for (int slot = 0; slot < PlayerInventory.getHotbarSize(); slot++) {
-                    ItemStack stack = player.getInventory().getStack(slot);
-                    if (stack != null) stacks.add(stack);
-                }
-                break;
-            default:
-                DefaultedList<ItemStack> mainStacks = player.getInventory().getMainStacks();
-                if (mainStacks != null) stacks.addAll(mainStacks);
-        }
-        ItemStack offHandStack = player.getOffHandStack();
-        if (offHandStack != null) stacks.add(offHandStack);
-
-        if (ConfigManager.getConfig().showBundled()) {
-            ListIterator<ItemStack> it = stacks.listIterator();
-            while (it.hasNext()) {
-                BundleContentsComponent contentsComponent = it.next().get(DataComponentTypes.BUNDLE_CONTENTS);
-                if (contentsComponent != null) contentsComponent.stream().forEach(stack -> it.add(stack));
-            }
-        }
-        return stacks;
+        return getPlayerStacks(player, ConfigManager.getConfig().holdingLocation());
     }
 
     private static List<TrackedWaypoint> getWaypointsFromPlayer(PlayerEntity player) {

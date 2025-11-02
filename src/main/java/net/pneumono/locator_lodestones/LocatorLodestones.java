@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.ResourceManager;
@@ -31,20 +32,38 @@ public class LocatorLodestones implements ClientModInitializer {
 	public static final RegistryKey<WaypointStyle> COMPASS_DIVISION_SMALL_STYLE = style("compass_division_small");
 	public static final List<RegistryKey<WaypointStyle>> COMPASS_CARDINAL_STYLE = List.of( style("compass_south"), style("compass_west"), style("compass_north"), style("compass_east") );
 
+	public static WaypointTracker waypointTracker = new WaypointTracker();
+	public static BedtimeTracker bedtimeTracker = new BedtimeTracker();
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onInitializeClient() {
 		LOGGER.info("Initializing Locator Lodestones");
-		ConfigManager.initConfig();
-		WaypointTracking.init();
-		ClientTickEvents.END_CLIENT_TICK.register(client -> WaypointTracking.updateWaypoints(client.player));
-		ServerLifecycleEvents.SERVER_STARTING.register(server -> WaypointTracking.resetWaypoints());
+		ConfigManager.initConfig(this::reset);
+		waypointTracker.init();
+		ClientTickEvents.END_CLIENT_TICK.register(this::tick);
+		ServerLifecycleEvents.SERVER_STARTING.register(server -> this.reset());
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
             @Override
             public Identifier getFabricId() { return id("waypoint_style_assets_listener"); }
 			@Override
 			public void reload(ResourceManager manager) { MapWaypointStyleAssets.reload(); }
 		});
+	}
+
+	public void tick(MinecraftClient client) {
+		waypointTracker.tick(client);
+		bedtimeTracker.tick(client);
+	}
+
+	public void reset() {
+		waypointTracker.reset();
+		bedtimeTracker.reset();
+	}
+
+	public static void onInventoryChanged() {
+		waypointTracker.markDirty();
+		bedtimeTracker.markDirty();
 	}
 
 	public static RegistryKey<WaypointStyle> style(String path) {
