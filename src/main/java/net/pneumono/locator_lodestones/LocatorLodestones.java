@@ -33,7 +33,7 @@ public class LocatorLodestones implements ClientModInitializer {
 	public static final List<RegistryKey<WaypointStyle>> COMPASS_CARDINAL_STYLE = List.of( style("compass_south"), style("compass_west"), style("compass_north"), style("compass_east") );
 
 	public static WaypointTracker waypointTracker = new WaypointTracker();
-	public static BedtimeTracker bedtimeTracker = new BedtimeTracker();
+	public static ClockTracker bedtimeTracker = new ClockTracker();
 
 	@SuppressWarnings("deprecation")
 	@Override

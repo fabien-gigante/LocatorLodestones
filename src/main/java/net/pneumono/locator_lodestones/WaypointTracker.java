@@ -110,7 +110,7 @@ public class WaypointTracker extends AbstractTracker {
             if (lastDeathPos.isPresent() && stack.isOf(Items.RECOVERY_COMPASS)) {
                 GlobalPos pos = lastDeathPos.get();
                 if (pos.dimension() == dimension && pos.pos() != null) {
-                    Integer color = ColorHandler.getColor(stack).orElse(ConfigManager.getConfig().recoveryColor().getColorWithAlpha());
+                    Integer color = ColorHandler.getColor(stack).orElse(ConfigManager.getConfig().colors().recoveryColor().getColorWithAlpha());
                     TrackedWaypoint waypoint = new NamedWaypoint("death_" + pos, LocatorLodestones.DEATH_STYLE, color, pos.pos(), getText(stack));
                     waypoints.add(waypoint);
                 }
@@ -121,7 +121,7 @@ public class WaypointTracker extends AbstractTracker {
         if (trackerComponent != null && trackerComponent.target().isPresent()) {
             GlobalPos pos = trackerComponent.target().get();
             if (pos.dimension() == dimension && pos.pos() != null) {
-                Integer color = ColorHandler.getColor(stack).orElse(ConfigManager.getConfig().lodestoneColor().getColorWithAlpha());
+                Integer color = ColorHandler.getColor(stack).orElse(ConfigManager.getConfig().colors().lodestoneColor().getColorWithAlpha());
                 TrackedWaypoint waypoint = new NamedWaypoint("lodestone_" + pos, LocatorLodestones.LODESTONE_STYLE, color, pos.pos(), getText(stack));
                 waypoints.add(waypoint);
             }
@@ -134,7 +134,7 @@ public class WaypointTracker extends AbstractTracker {
             /*GlobalPos pos = new GlobalPos(World.OVERWORLD, world.getSpawnPos());
             *///?}
             if (pos.dimension() == dimension && pos.pos() != null) {
-                Integer color = ColorHandler.getColor(stack).orElse(ConfigManager.getConfig().spawnColor().getColorWithAlpha());
+                Integer color = ColorHandler.getColor(stack).orElse(ConfigManager.getConfig().colors().spawnColor().getColorWithAlpha());
                 TrackedWaypoint waypoint = new NamedWaypoint("spawn_" + pos, LocatorLodestones.SPAWN_STYLE, color, pos.pos(), getText(stack));
                 waypoints.add(waypoint);
             }

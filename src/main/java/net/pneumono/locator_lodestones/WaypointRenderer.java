@@ -27,7 +27,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.waypoint.EntityTickProgress;
 //?}
 
-public class WaypointRendering {
+public class WaypointRenderer {
 
     protected static record WaypointMatch(TrackedWaypoint waypoint, double yaw) {}
     protected static WaypointMatch NO_MATCH = new WaypointMatch(null, Double.NaN);

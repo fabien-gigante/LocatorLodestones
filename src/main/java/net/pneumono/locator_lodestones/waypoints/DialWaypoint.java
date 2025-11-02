@@ -43,7 +43,7 @@ public class DialWaypoint extends TrackedWaypoint.Azimuth {
     private static Config configFromStyle(RegistryKey<WaypointStyle> style) {
         Waypoint.Config config = new Waypoint.Config();
         config.style = style;
-        config.color = Optional.of(ConfigManager.getConfig().dialColor().getColorWithAlpha(160));
+        config.color = Optional.of(ConfigManager.getConfig().colors().dialColor().getColorWithAlpha(160));
         return config;
     }
     

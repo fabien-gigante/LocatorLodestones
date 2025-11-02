@@ -11,7 +11,6 @@ import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
 import net.pneumono.locator_lodestones.config.Config;
 import net.pneumono.locator_lodestones.config.ConfigManager;
 
@@ -34,7 +33,7 @@ public abstract class AbstractTracker {
     public void tick(MinecraftClient client) { 
         ClientPlayerEntity player = client.player;
         if (!dirty || player == null || !player.isLoaded()) return;
-        if (lastUpdateTime + UPDATE_COOLDOWN > player.age && lastUpdateTime < player.age) return;
+        if (lastUpdateTime <= player.age && player.age < lastUpdateTime + UPDATE_COOLDOWN) return;
         lastUpdateTime = player.age;
         dirty = false;
         update(client);
@@ -44,29 +43,30 @@ public abstract class AbstractTracker {
 
     protected static List<ItemStack> getPlayerStacks(PlayerEntity player, Config.HoldingLocation location) {
         List<ItemStack> stacks = new ArrayList<>();
+
+        // Compute stacks based on specified location
         switch(location) {
+            case Config.HoldingLocation.NONE:
+                return stacks;
             case Config.HoldingLocation.HANDS:
-                ItemStack selectedStack = player.getInventory().getSelectedStack();
-                if (selectedStack != null) stacks.add(selectedStack);
+                stacks.add(player.getInventory().getSelectedStack());
                 break;
             case Config.HoldingLocation.HOTBAR: 
-                for (int slot = 0; slot < PlayerInventory.getHotbarSize(); slot++) {
-                    ItemStack stack = player.getInventory().getStack(slot);
-                    if (stack != null) stacks.add(stack);
-                }
+                for (int slot = 0; slot < PlayerInventory.getHotbarSize(); slot++)
+                    stacks.add( player.getInventory().getStack(slot));
                 break;
+            case Config.HoldingLocation.INVENTORY:
             default:
-                DefaultedList<ItemStack> mainStacks = player.getInventory().getMainStacks();
-                if (mainStacks != null) stacks.addAll(mainStacks);
+                stacks.addAll(player.getInventory().getMainStacks());
         }
-        ItemStack offHandStack = player.getOffHandStack();
-        if (offHandStack != null) stacks.add(offHandStack);
+        stacks.add(player.getOffHandStack());
 
+        // If configured (and location not NONE), include contents of bundles
         if (ConfigManager.getConfig().showBundled()) {
             ListIterator<ItemStack> it = stacks.listIterator();
             while (it.hasNext()) {
                 BundleContentsComponent contentsComponent = it.next().get(DataComponentTypes.BUNDLE_CONTENTS);
-                if (contentsComponent != null) contentsComponent.stream().forEach(stack -> it.add(stack));
+                if (contentsComponent != null) contentsComponent.stream().forEach(it::add);
             }
         }
         return stacks;
