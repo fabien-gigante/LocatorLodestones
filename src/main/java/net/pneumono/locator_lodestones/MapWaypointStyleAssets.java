@@ -12,6 +12,7 @@ import net.minecraft.item.map.MapDecorationType;
 import net.minecraft.item.map.MapDecorationTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.ColorHelper;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.waypoint.WaypointStyle;
@@ -54,7 +55,8 @@ public class MapWaypointStyleAssets {
             RegistryKey<WaypointStyle> style = LocatorLodestones.style("map_" + id.getPath());
             STYLES.put(type, style);
             WaypointStyleAsset asset = new WaypointStyleAsset(WaypointStyleAsset.DEFAULT_NEAR_DISTANCE, WaypointStyleAsset.DEFAULT_FAR_DISTANCE,
-                List.of(id), List.of(id.withPrefixedPath("hud/locator_bar_dot/map/")));
+                List.of(id.withSuffixedPath("_0"), id.withSuffixedPath("_1")),
+                List.of(id.withPrefixedPath("hud/locator_bar_dot/map/"), id.withPrefixedPath("hud/locator_bar_dot/map/small/")));
             assetManager.registry.put(style, asset);
         });
     }
@@ -65,6 +67,6 @@ public class MapWaypointStyleAssets {
     public static int getColor(RegistryEntry<MapDecorationType> type) {
         int color = type.value().mapColor();
         if (color == -1) color = COLORS.getOrDefault(type, -1);
-        return 0xff000000 | color;
+        return ColorHelper.fullAlpha(color);
     }
 }
