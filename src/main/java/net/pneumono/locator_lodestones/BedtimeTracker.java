@@ -33,7 +33,8 @@ public class BedtimeTracker extends AbstractTracker {
 
     @Override
     public void update(MinecraftClient client) {
-        hasClock = getPlayerStacks(client.player).stream().anyMatch(stack -> stack.isOf(Items.CLOCK));
+        if (ConfigManager.getConfig().bedtimeClock())
+            hasClock = getPlayerStacks(client.player).stream().anyMatch(stack -> stack.isOf(Items.CLOCK));
     }
     
     private static List<ItemStack> getPlayerStacks(PlayerEntity player) {

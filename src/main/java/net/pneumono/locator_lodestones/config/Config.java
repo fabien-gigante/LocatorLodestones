@@ -5,12 +5,12 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public record Config(
         boolean tabForcesLocatorBar, boolean tabShowsNames, boolean showRecovery, boolean showSpawn, boolean showMaps, boolean showBundled,
-        boolean showInSpectator, HoldingLocation holdingLocation, boolean showCompassDial, boolean showDistance, boolean colorCustomization,
-        ColorProvider lodestoneColor, ColorProvider recoveryColor, ColorProvider spawnColor, ColorProvider dialColor) {
+        boolean showInSpectator, HoldingLocation holdingLocation, boolean showCompassDial, boolean showDistance, boolean bedtimeClock,
+        boolean colorCustomization, ColorProvider lodestoneColor, ColorProvider recoveryColor, ColorProvider spawnColor, ColorProvider dialColor) {
 
     public static final Config DEFAULT = new Config(
             true, true, true, false, false, true,
-            true, HoldingLocation.INVENTORY, false, false, true,
+            true, HoldingLocation.INVENTORY, false, false, true, true,
             new ColorProvider(null), new ColorProvider(0xBCE0EB), new ColorProvider(0x6BCF6D), new ColorProvider(0x879E7B)
     );
 
@@ -25,6 +25,7 @@ public record Config(
             HoldingLocation.CODEC.fieldOf("holding_location").forGetter(Config::holdingLocation),
             Codec.BOOL.fieldOf("show_compass_dial").forGetter(Config::showCompassDial),
             Codec.BOOL.fieldOf("show_distance").forGetter(Config::showDistance),
+            Codec.BOOL.fieldOf("bedtime_clock").forGetter(Config::bedtimeClock),
             Codec.BOOL.fieldOf("color_customization").forGetter(Config::colorCustomization),
             ColorProvider.CODEC.fieldOf("lodestone_color").forGetter(Config::lodestoneColor),
             ColorProvider.CODEC.fieldOf("recovery_color").forGetter(Config::recoveryColor),
