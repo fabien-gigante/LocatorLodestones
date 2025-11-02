@@ -4,14 +4,14 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public record Config(
-        boolean tabForcesLocatorBar, boolean tabShowsNames, boolean showRecovery, boolean showSpawn, boolean showMaps, boolean showBundled,
-        boolean showInSpectator, HoldingLocation holdingLocation, boolean showCompassDial, boolean showDistance, boolean bedtimeClock,
+        boolean tabForcesLocatorBar, boolean tabShowsNames, boolean showRecovery, boolean showSpawn, boolean showMaps, boolean showBundled, boolean showInSpectator,
+        HoldingLocation holdingLocation, boolean showCompassDial, boolean showDistance, boolean bedtimeClock,
         boolean colorCustomization, ColorProvider lodestoneColor, ColorProvider recoveryColor, ColorProvider spawnColor, ColorProvider dialColor) {
 
     public static final Config DEFAULT = new Config(
-            true, true, true, false, false, true,
-            true, HoldingLocation.INVENTORY, false, false, true, true,
-            new ColorProvider(null), new ColorProvider(0xBCE0EB), new ColorProvider(0x6BCF6D), new ColorProvider(0x879E7B)
+            true, true, true, false, false, true, true,
+            HoldingLocation.INVENTORY, false, false, true,
+            true, new ColorProvider(null), new ColorProvider(0xBCE0EB), new ColorProvider(0x6BCF6D), new ColorProvider(0x879E7B)
     );
 
     public static final Codec<Config> CODEC = RecordCodecBuilder.create(instance -> instance.group(

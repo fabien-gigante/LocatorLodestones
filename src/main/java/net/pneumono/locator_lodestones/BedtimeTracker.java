@@ -1,12 +1,9 @@
 package net.pneumono.locator_lodestones;
 
-import java.util.List;
-
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvents;
+import net.pneumono.locator_lodestones.config.Config.HoldingLocation;
 import net.pneumono.locator_lodestones.config.ConfigManager;
 
 public class BedtimeTracker extends AbstractTracker {
@@ -34,11 +31,6 @@ public class BedtimeTracker extends AbstractTracker {
     @Override
     public void update(MinecraftClient client) {
         if (ConfigManager.getConfig().bedtimeClock())
-            hasClock = getPlayerStacks(client.player).stream().anyMatch(stack -> stack.isOf(Items.CLOCK));
+            hasClock = getPlayerStacks(client.player, HoldingLocation.INVENTORY).stream().anyMatch(stack -> stack.isOf(Items.CLOCK));
     }
-    
-    private static List<ItemStack> getPlayerStacks(PlayerEntity player) {
-        return getPlayerStacks(player, ConfigManager.getConfig().holdingLocation());
-    }
-
 }
