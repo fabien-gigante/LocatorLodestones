@@ -45,6 +45,9 @@ public class MapWaypointStyleAssets {
         Map.entry(MapDecorationTypes.BANNER_RED,        MapColor.RED.color),
         Map.entry(MapDecorationTypes.BANNER_BLACK,      MapColor.BLACK.color));
 
+    private static final int NEAR_DISTANCE = 8 * WaypointStyleAsset.DEFAULT_NEAR_DISTANCE;
+    private static final int FAR_DISTANCE = 8 * WaypointStyleAsset.DEFAULT_FAR_DISTANCE;
+
     public static void reload() {
         MinecraftClient client = MinecraftClient.getInstance();
         WaypointStyleAssetManager assetManager = client.getWaypointStyleAssetManager();
@@ -54,7 +57,7 @@ public class MapWaypointStyleAssets {
             Identifier id = LocatorLodestones.id(type.value().assetId().getPath());
             RegistryKey<WaypointStyle> style = LocatorLodestones.style("map_" + id.getPath());
             STYLES.put(type, style);
-            WaypointStyleAsset asset = new WaypointStyleAsset(WaypointStyleAsset.DEFAULT_NEAR_DISTANCE, WaypointStyleAsset.DEFAULT_FAR_DISTANCE,
+            WaypointStyleAsset asset = new WaypointStyleAsset(NEAR_DISTANCE, FAR_DISTANCE,
                 List.of(id.withSuffixedPath("_0"), id.withSuffixedPath("_1")),
                 List.of(id.withPrefixedPath("hud/locator_bar_dot/map/"), id.withPrefixedPath("hud/locator_bar_dot/map/small/")));
             assetManager.registry.put(style, asset);
