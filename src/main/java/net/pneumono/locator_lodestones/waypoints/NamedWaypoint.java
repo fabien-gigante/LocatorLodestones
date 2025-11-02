@@ -16,15 +16,12 @@ import net.minecraft.world.waypoint.WaypointStyle;
 public class NamedWaypoint extends TrackedWaypoint.Positional {
     protected Optional<Text> name = Optional.empty();
 
-    protected NamedWaypoint(String source, Config config, Vec3i pos) {
+    protected NamedWaypoint(String source, Config config, Vec3i pos, Optional<Text> name) {
         super(Either.right(source), config, bufFromPos(pos));
-    }
-    public NamedWaypoint(String source, RegistryKey<WaypointStyle> style, @Nullable Integer color, Vec3i pos) {
-        this(source, configFromStyle(style, color), pos);
+        this.name = name;
     }
     public NamedWaypoint(String source, RegistryKey<WaypointStyle> style, @Nullable Integer color, Vec3i pos, Optional<Text> name) {
-        this(source, style, color, pos);
-        this.name = name;
+        this(source, configFromStyle(style, color), pos, name);
     }
 
     public Optional<Text> getName() { return name; }

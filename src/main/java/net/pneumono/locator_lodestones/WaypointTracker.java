@@ -147,7 +147,7 @@ public class WaypointTracker extends AbstractTracker {
                 MapDecorationsComponent mapDecorationsComponent = stack.get(DataComponentTypes.MAP_DECORATIONS);
                 if (mapIdComponent != null && mapDecorationsComponent != null) {
                     mapDecorationsComponent.decorations().forEach((key, deco) -> {
-                        TrackedWaypoint waypoint = new MapWaypoint("map_" + mapIdComponent.id() + "_" + key, deco);
+                        TrackedWaypoint waypoint = new MapWaypoint("map_" + mapIdComponent.id() + "_" + key, deco, getText(stack));
                         waypoints.add(waypoint);
                     });
                 }

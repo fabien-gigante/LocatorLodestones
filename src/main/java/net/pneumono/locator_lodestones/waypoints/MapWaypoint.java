@@ -4,11 +4,9 @@ import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.mojang.datafixers.util.Either;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.entity.Entity;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.Vec3d;
@@ -23,16 +21,13 @@ import net.minecraft.world.waypoint.WaypointStyle;
 import net.pneumono.locator_lodestones.MapWaypointStyleAssets;
 import net.minecraft.component.type.MapDecorationsComponent.Decoration;
 
-public class MapWaypoint extends TrackedWaypoint.Positional {
-    protected MapWaypoint(String source, Waypoint.Config config, Vec3i pos) {
-        super(Either.right(source), config, bufFromPos(pos));
+public class MapWaypoint extends NamedWaypoint {
+    protected MapWaypoint(String source, RegistryKey<WaypointStyle> style, @Nullable Integer color, Vec3i pos, Optional<Text> name) {
+        super(source, configFromStyle(style, color), pos, name);
     }
-    protected MapWaypoint(String source, RegistryKey<WaypointStyle> style, Vec3i pos, @Nullable Integer color) {
-        this(source, configFromStyle(style, color), pos);
-    }
-    public MapWaypoint(String source, Decoration deco) {
-        this(source, MapWaypointStyleAssets.getStyle(deco.type()),
-            new Vec3i((int)Math.floor(deco.x()), 0, (int)Math.floor(deco.z())), MapWaypointStyleAssets.getColor(deco.type()));
+    public MapWaypoint(String source, Decoration deco, Optional<Text> name) {
+        this(source, MapWaypointStyleAssets.getStyle(deco.type()), MapWaypointStyleAssets.getColor(deco.type()),
+            new Vec3i((int)Math.floor(deco.x()), 0, (int)Math.floor(deco.z())), name);
     }
 
     @Override
@@ -51,23 +46,15 @@ public class MapWaypoint extends TrackedWaypoint.Positional {
         return Pitch.NONE;
     }
 
+    public static class Config extends Waypoint.Config {
+        public Optional<Integer> textColor = Optional.empty();
+    }
+
     private static Config configFromStyle(RegistryKey<WaypointStyle> style, @Nullable Integer color) {
         Config config = new Config();
         config.style = style;
         config.color = Optional.of(Colors.WHITE);
         config.textColor = color == -1 ? Optional.empty() : Optional.of(ColorHelper.withAlpha(255, color));
         return config;
-    }
-    
-    private static PacketByteBuf bufFromPos(Vec3i pos) {
-        PacketByteBuf buf = PacketByteBufs.create();
-        buf.writeVarInt(pos.getX());
-        buf.writeVarInt(pos.getY());
-        buf.writeVarInt(pos.getZ());
-        return buf;
-    }
-
-    public static class Config extends Waypoint.Config {
-        public Optional<Integer> textColor = Optional.empty();
     }
 }
