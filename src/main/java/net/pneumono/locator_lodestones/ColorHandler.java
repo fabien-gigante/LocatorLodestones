@@ -3,6 +3,7 @@ package net.pneumono.locator_lodestones;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.ColorHelper;
 import net.pneumono.locator_lodestones.config.ConfigManager;
 import org.jetbrains.annotations.Nullable;
@@ -35,23 +36,42 @@ public class ColorHandler {
             return Optional.empty();
         }
 
-        Matcher matcher = Pattern.compile("#[0-9a-fA-F]{6}").matcher(text);
+        Matcher hexMatcher = Pattern.compile("#[0-9a-fA-F]{6}").matcher(text);
+        Matcher codeMatcher = Pattern.compile("[§&][0-9a-f]").matcher(text);
 
-        String string = null;
-        if (matcher.find()) {
-            string = matcher.group();
+        if (hexMatcher.find()) {
+            return parseHexCode(hexMatcher.group());
+
+        } else if (codeMatcher.find()) {
+            return parseFormattingCode(codeMatcher.group());
         }
 
-        return parseCode(string);
+        return Optional.empty();
     }
 
-    public static Optional<Integer> parseCode(@Nullable String string) {
+    public static Optional<Integer> parseFormattingCode(@Nullable String string) {
+        if (string == null) return Optional.empty();
+
+        if (string.length() < 2) {
+            LocatorLodestones.LOGGER.error("String '{}' is not a valid formatting code!", string);
+        }
+
+        Formatting formatting = Formatting.byCode(string.charAt(1));
+        if (formatting == null) {
+            return Optional.empty();
+        } else {
+            Integer integer = formatting.getColorValue();
+            return integer == null ? Optional.empty() : Optional.of(ColorHelper.withAlpha(255, integer));
+        }
+    }
+
+    public static Optional<Integer> parseHexCode(@Nullable String string) {
         if (string == null) return Optional.empty();
 
         try {
             return Optional.of(ColorHelper.withAlpha(255, Integer.parseInt(string, 1, 7, 16)));
         } catch (NullPointerException | IndexOutOfBoundsException | NumberFormatException e) {
-            LocatorLodestones.LOGGER.error("String '{}' is not a valid color code!", string, e);
+            LocatorLodestones.LOGGER.error("String '{}' is not a valid hex code!", string, e);
             return Optional.empty();
         }
     }
@@ -59,7 +79,9 @@ public class ColorHandler {
     public static Optional<Text> removeColorCode(Text text) {
         if (text == null) return Optional.empty();
 
-        String string = text.getString().replaceAll("( ?)([({<\\[]?)(#[0-9a-fA-F]{6})([)}>\\]]?)", "");
+        String string = text.getString()
+                .replaceAll("( ?)([({<\\[]?)(#[0-9a-fA-F]{6})([)}>\\]]?)", "")
+                .replaceAll("( ?)([({<\\[]?)([§&][0-9a-f])([)}>\\]]?)", "");
         return string.isEmpty() ? Optional.empty() : Optional.of(Text.literal(string));
     }
 }
