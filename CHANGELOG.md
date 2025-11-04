@@ -1,3 +1,4 @@
-- Fixed waypoints with a blank name still rendering a dark box
-- Fixed waypoints not updating if inventory changes were made in quick succession
-- Fixed waypoints not updating when items were dropped
+- Added support for [Formatting Codes](https://minecraft.wiki/w/Formatting_codes) to change waypoint colors
+  - This supports using both `§` and `&` as prefixes
+- Fixed Minecraft version being used for FMJ mod version
+  - Caused issues such as Mod Menu displaying the mod version as "1.21.6"
