@@ -28,7 +28,7 @@ Only consider compasses held by the player within a configurable location:
 - hands only.
 
 Optionally adds a compass dial to the locator bar: 
-- showing cardinal directions (north ↑, south ↓, east ←, west →)
+- showing cardinal directions (north ↑, south ↓, west ←, east →)
 - showing divisions to estimate angles in between
 - displayed when the player has a compass (even if not linked to a lodestone) or a recovery compass
 - under a new config option (false by default)
