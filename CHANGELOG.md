@@ -1,4 +1,1 @@
-- Added support for [Formatting Codes](https://minecraft.wiki/w/Formatting_codes) to change waypoint colors
-  - This supports using both `§` and `&` as prefixes
-- Fixed Minecraft version being used for FMJ mod version
-  - Caused issues such as Mod Menu displaying the mod version as "1.21.6"
+- Fix crash when joining a server after exiting one
