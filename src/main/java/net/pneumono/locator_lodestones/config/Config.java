@@ -8,14 +8,14 @@ import net.minecraft.sound.SoundEvents;
 
 public record Config(
     boolean tabForcesLocatorBar, boolean tabShowsNames, HoldingLocation holdingLocation,
-    boolean showRecovery, boolean showSpawn, boolean showMaps, boolean showBundled, boolean showInSpectator,
+    boolean showRecovery, boolean showSpawn, boolean showMaps, boolean holdingBundles, boolean showInSpectator,
     boolean showCompassDial, boolean showDistance, HoldingLocation clockLocation, SoundEvent clockSound,
     ColorSettings colors) {
 
     public static final Config DEFAULT = new Config(
         true, true, HoldingLocation.INVENTORY,
         true, false, false, true, false,
-        false, true, HoldingLocation.INVENTORY, SoundEvents.BLOCK_NOTE_BLOCK_CHIME.value(),
+        false, true, HoldingLocation.NONE, SoundEvents.BLOCK_NOTE_BLOCK_CHIME.value(),
         new ColorSettings(true,
             new ColorProvider(null), new ColorProvider(0xBCE0EB),
             new ColorProvider(0x6BCF6D), new ColorProvider(0x879E7B))
@@ -28,7 +28,7 @@ public record Config(
             Codec.BOOL.fieldOf("show_recovery_compasses").forGetter(Config::showRecovery),
             Codec.BOOL.fieldOf("show_spawn").forGetter(Config::showSpawn),
             Codec.BOOL.fieldOf("show_maps").forGetter(Config::showMaps),
-            Codec.BOOL.fieldOf("show_bundled_compasses").forGetter(Config::showBundled),
+            Codec.BOOL.fieldOf("holding_bundles").forGetter(Config::holdingBundles),
             Codec.BOOL.fieldOf("show_in_spectator").forGetter(Config::showInSpectator),
             Codec.BOOL.fieldOf("show_compass_dial").forGetter(Config::showCompassDial),
             Codec.BOOL.fieldOf("show_distance").forGetter(Config::showDistance),

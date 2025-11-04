@@ -57,7 +57,7 @@ Display map's points of interest as waypoints on the locator bar:
 ![Map's PoI](https://private-user-images.githubusercontent.com/21187022/506791985-87048a8f-4df4-43f2-be89-c7a69bc97ee4.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NjIyNTEyMDQsIm5iZiI6MTc2MjI1MDkwNCwicGF0aCI6Ii8yMTE4NzAyMi81MDY3OTE5ODUtODcwNDhhOGYtNGRmNC00M2YyLWJlODktYzdhNjliYzk3ZWU0LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTExMDQlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUxMTA0VDEwMDgyNFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTYwNjI1YTk3ZDY4ZjljMjc2YjMyNjE0ZjBiYjI4ZjFiMDIwMzgzYjUwMDkyNzdkOTdlOWYzNGU1ZDU5NDZiMTEmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.K4GrIFemXjDZT2TFulJ8rURZF8pbCZyT5ixZNlEdhis)
 
 Clock held by player chime at night time :
-- location configurable (default inventory)
+- location configurable (default none)
   - inside bundles included (if enabled by config)
 - it plays a chime sound (configurable) at the end of every day
 - only works in overworld (when the clock itself works)
@@ -70,7 +70,7 @@ Configuration file format has been updated as follows (default values shown):
   "tab_forces_locator_bar": true,
   "tab_shows_names": true,
   "holding_location": "inventory",
-  "show_bundled_compasses": true,
+  "holding_bundles": true,
   "show_compass_dial": false,
   "show_recovery_compasses": true,
   "show_spawn": false,
@@ -84,7 +84,7 @@ Configuration file format has been updated as follows (default values shown):
     "dial_color": "879e7b",
     "color_customization": true
   },
-  "clock_location": "inventory",
+  "clock_location": "none",
   "clock_sound": {
     "sound_id": "minecraft:block.note_block.chime"
   }

@@ -62,7 +62,7 @@ public abstract class AbstractTracker {
         stacks.add(player.getOffHandStack());
 
         // If configured (and location not NONE), include contents of bundles
-        if (ConfigManager.getConfig().showBundled()) {
+        if (ConfigManager.getConfig().holdingBundles()) {
             ListIterator<ItemStack> it = stacks.listIterator();
             while (it.hasNext()) {
                 BundleContentsComponent contentsComponent = it.next().get(DataComponentTypes.BUNDLE_CONTENTS);
