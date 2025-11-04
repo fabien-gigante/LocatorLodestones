@@ -78,11 +78,11 @@ Configuration file format has been updated as follows (default values shown):
   "show_distance": false,
   "show_in_spectator": false,
   "colors": {
+    "lodestone_color": "random",
     "recovery_color": "bce0eb",
     "spawn_color": "6bcf6d",
     "dial_color": "879e7b",
-    "color_customization": true,
-    "lodestone_color": "random"
+    "color_customization": true
   },
   "clock_location": "inventory",
   "clock_sound": {
