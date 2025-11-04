@@ -84,7 +84,7 @@ Configuration file format has been updated as follows (default values shown):
     "color_customization": true,
     "lodestone_color": "random"
   },
-  "clock_location": "none",
+  "clock_location": "inventory",
   "clock_sound": {
     "sound_id": "minecraft:block.note_block.chime"
   }
