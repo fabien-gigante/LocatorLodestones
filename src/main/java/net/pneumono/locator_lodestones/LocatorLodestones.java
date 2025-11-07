@@ -3,7 +3,7 @@ package net.pneumono.locator_lodestones;
 import net.fabricmc.api.ClientModInitializer;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.client.MinecraftClient;
@@ -42,7 +42,7 @@ public class LocatorLodestones implements ClientModInitializer {
 		ConfigManager.initConfig(this::reset);
 		waypointTracker.init();
 		ClientTickEvents.END_CLIENT_TICK.register(this::tick);
-		ServerLifecycleEvents.SERVER_STARTING.register(server -> this.reset());
+		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> this.reset());
 		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
             @Override
             public Identifier getFabricId() { return id("waypoint_style_assets_listener"); }
