@@ -66,10 +66,17 @@ public class WaypointTracker extends AbstractTracker {
     @Override
     public void init() {
         super.init();
-        for(int azimuth = 0; azimuth < 360; azimuth += 15) {
+        this.buildCompassDial();
+    }
+
+    private void buildCompassDial() {
+        COMPASS_DIAL_WAYPOINTS.clear();
+        int dialResolution = ConfigManager.getConfig().dialResolution();
+        for(int i = 0; i < dialResolution; i++) {
+            int azimuth = i * 360 / dialResolution;
             var style = azimuth % 90 == 0 ? LocatorLodestones.COMPASS_CARDINAL_STYLE.get(azimuth / 90) :
                         azimuth % 45 == 0 ? LocatorLodestones.COMPASS_DIVISION_STYLE : LocatorLodestones.COMPASS_DIVISION_SMALL_STYLE;
-            COMPASS_DIAL_WAYPOINTS.add(new DialWaypoint("dial_" + azimuth, style, (float)(azimuth * Math.PI / 180)));
+            COMPASS_DIAL_WAYPOINTS.add(new DialWaypoint("dial_" + azimuth, style, (float)(i * Math.TAU / dialResolution)));
         }
     }
 
@@ -81,7 +88,7 @@ public class WaypointTracker extends AbstractTracker {
         List<TrackedWaypoint> waypoints = new ArrayList<>();
         List<ItemStack> stacks = getPlayerStacks(player);
 
-        if (ConfigManager.getConfig().showCompassDial()) {
+        if (ConfigManager.getConfig().dialResolution() > 0) {
             boolean withMaps = ConfigManager.getConfig().showMaps();
             if (stacks.stream().anyMatch(stack -> stack.isOf(Items.COMPASS) || stack.isOf(Items.RECOVERY_COMPASS) || (withMaps && stack.isOf(Items.FILLED_MAP))))
                 waypoints.addAll(COMPASS_DIAL_WAYPOINTS);

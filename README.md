@@ -29,9 +29,9 @@ Only consider compasses held by the player within a configurable location:
 
 Optionally adds a compass dial to the locator bar: 
 - showing cardinal directions (north ↑, south ↓, west ←, east →)
-- showing divisions to estimate angles in between
+- showing divisions to estimate angles in between (number of divisions configurable)
 - displayed when the player has a compass (even if not linked to a lodestone) or a recovery compass
-- under a new config option (false by default)
+- under a new config option (0 divisions, ie. hidden, by default)
 
 ![Compass dial](https://github.com/user-attachments/assets/c5e81f2c-42f0-4dc2-98f5-7f2b6feecaf7)
 
@@ -47,19 +47,19 @@ Display the distance to the waypoint the player is aiming at:
 
 Display spawn point on locator bar:
 - when holding a non-lodestone compass
-- under config option (default to false)
+- under config option (false by default)
 
 ![Spawn point](https://github.com/user-attachments/assets/907387f0-8132-4e77-a88e-e936cc930275)
 
 Display map's points of interest as waypoints on the locator bar:
 - when holding a filled map
-- under config option
+- under config option (false by default)
 - banners on maps only appear as waypoints if the mod is also installed server-side (optional)
 
 ![Map's PoI](https://github.com/user-attachments/assets/8e439dd4-16da-432b-9e6c-6e11c7516a2f)
 
 Clock held by player chime at night time :
-- location configurable (default none)
+- location configurable (none by default)
   - inside bundles included (if enabled by config)
 - it plays a chime sound (configurable) at the end of every day
 - only works in overworld (when the clock itself works)
@@ -67,13 +67,13 @@ Clock held by player chime at night time :
 <hr/>
 
 Configuration file format has been updated as follows (default values shown):
-```
+```json
 {
   "tab_forces_locator_bar": true,
   "tab_shows_names": true,
   "holding_location": "inventory",
   "holding_bundles": true,
-  "show_compass_dial": false,
+  "dial_resolution": 0,
   "show_recovery_compasses": true,
   "show_spawn": false,
   "show_maps": false,
