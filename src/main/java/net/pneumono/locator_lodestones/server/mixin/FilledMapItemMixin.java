@@ -30,7 +30,14 @@ public class FilledMapItemMixin {
         MapDecorationsHelper.updateBannerComponent(context.getWorld(), context.getStack(), context.getBlockPos());
     }
 
-    @Inject(method = "inventoryTick",at = @At("RETURN"))
+    @Inject(
+        method = "inventoryTick",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/item/FilledMapItem;updateColors(Lnet/minecraft/world/World;Lnet/minecraft/entity/Entity;Lnet/minecraft/item/map/MapState;)V",
+            shift = At.Shift.AFTER
+        )
+    )
     private void updateBannerComponents(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot, CallbackInfo ci) {
         MapDecorationsHelper.updateBannerComponents(world, stack);
     }

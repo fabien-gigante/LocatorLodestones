@@ -30,9 +30,7 @@ public class MapDecorationsHelper {
     private static void addBannerComponent(ItemStack stack, BlockPos pos, String id, RegistryEntry<MapDecorationType> decorationType, Optional<Text> name) {
         MapDecorationsComponent.Decoration decoration = new MapDecorationsComponent.Decoration(decorationType, (double)pos.getX(), (double)pos.getZ(), 180.0F);
         if ((Object)decoration instanceof INamed named) named.setName(name);
-        stack.apply(DataComponentTypes.MAP_DECORATIONS, MapDecorationsComponent.DEFAULT, (decorations) -> {
-            return decorations.with(id, decoration);
-        });
+        stack.apply(DataComponentTypes.MAP_DECORATIONS, MapDecorationsComponent.DEFAULT, decorations -> decorations.with(id, decoration));
     }
 
     private static void removeBannerComponents(ItemStack stack, Predicate<String> condition) {
