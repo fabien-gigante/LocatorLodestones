@@ -54,6 +54,7 @@ Display spawn point on locator bar:
 Display map's points of interest as waypoints on the locator bar:
 - when holding a filled map
 - under config option
+- banners on maps only appear as waypoints if the mod is also installed server-side (optional)
 
 ![Map's PoI](https://github.com/user-attachments/assets/8e439dd4-16da-432b-9e6c-6e11c7516a2f)
 

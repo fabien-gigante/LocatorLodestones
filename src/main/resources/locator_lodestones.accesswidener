@@ -5,4 +5,3 @@ accessible class net/minecraft/world/waypoint/TrackedWaypoint$Positional
 accessible class net/minecraft/world/waypoint/TrackedWaypoint$Azimuth
 accessible field net/minecraft/client/resource/waypoint/WaypointStyleAssetManager registry Ljava/util/Map;
 accessible field net/minecraft/world/waypoint/TrackedWaypoint$Positional pos Lnet/minecraft/util/math/Vec3i;
-

@@ -1,1 +1,1 @@
-- Documenting fork features in README.md
+- If mod also installed on server side, banners on maps appear on locator bar

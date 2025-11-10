@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.item.map.MapDecoration;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
@@ -28,6 +29,9 @@ public class MapWaypoint extends NamedWaypoint {
     public MapWaypoint(String source, Decoration deco, Optional<Text> name) {
         this(source, MapWaypointStyleAssets.getStyle(deco.type()), MapWaypointStyleAssets.getColor(deco.type()),
             new Vec3i((int)Math.floor(deco.x()), 0, (int)Math.floor(deco.z())), name);
+    }
+    public MapWaypoint(String source, MapDecoration deco, Vec3i pos) {
+        this(source, MapWaypointStyleAssets.getStyle(deco.type()), MapWaypointStyleAssets.getColor(deco.type()), pos, deco.name());
     }
 
     @Override

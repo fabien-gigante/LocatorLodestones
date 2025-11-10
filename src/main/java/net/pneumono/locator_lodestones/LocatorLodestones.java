@@ -43,12 +43,13 @@ public class LocatorLodestones implements ClientModInitializer {
 		waypointTracker.init();
 		ClientTickEvents.END_CLIENT_TICK.register(this::tick);
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> this.reset());
-		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
-            @Override
-            public Identifier getFabricId() { return id("waypoint_style_assets_listener"); }
-			@Override
-			public void reload(ResourceManager manager) { MapWaypointStyleAssets.reload(); }
-		});
+		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(
+			new SimpleSynchronousResourceReloadListener() {
+				@Override
+				public Identifier getFabricId() { return id("waypoint_style_assets_listener"); }
+				@Override
+				public void reload(ResourceManager manager) { MapWaypointStyleAssets.reload(); }
+			});
 	}
 
 	public void tick(MinecraftClient client) {

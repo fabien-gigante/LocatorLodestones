@@ -1,0 +1,15 @@
+{
+    "required": true,
+    "package": "net.pneumono.locator_lodestones.server.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "mixins": [
+        "FilledMapItemMixin", 
+        "DecorationMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    },
+    "overwrites": {
+        "requireAnnotations": true
+    }
+}

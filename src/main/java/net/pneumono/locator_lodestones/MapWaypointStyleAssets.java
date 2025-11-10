@@ -68,8 +68,8 @@ public class MapWaypointStyleAssets {
         return STYLES.get(type);
     }
     public static int getColor(RegistryEntry<MapDecorationType> type) {
-        int color = type.value().mapColor();
-        if (color == -1) color = COLORS.getOrDefault(type, -1);
+        int color = type.value().hasMapColor() ? type.value().mapColor() : COLORS.getOrDefault(type, MapDecorationType.NO_MAP_COLOR);
         return ColorHelper.fullAlpha(color);
     }
+    
 }

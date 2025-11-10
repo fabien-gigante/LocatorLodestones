@@ -32,6 +32,7 @@
 		]
 	},
 	"mixins": [
+		"locator_lodestones.server.mixins.json",
 		{
 			"config": "locator_lodestones.mixins.json",
 			"environment": "client"
