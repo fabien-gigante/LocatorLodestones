@@ -40,6 +40,11 @@ public class ConfigManager {
          return CONFIG; 
     }
 
+    public static void setConfig(Config config) {
+        CONFIG = config;
+        writeConfigToFile(CONFIG);
+    }
+
     public static void reloadConfig() {
         CONFIG = readConfigFromFile();
         writeConfigToFile(CONFIG);

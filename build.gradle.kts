@@ -11,7 +11,8 @@ base.archivesName = "${property("mod_id")}"
 version = "${property("mod_version")}+${stonecutter.current.project}+${property("mod_subversion")}"
 
 repositories {
-
+    maven { url = uri("https://maven.shedaniel.me/") }
+    maven { url = uri("https://maven.terraformersmc.com/releases/") }
 }
 
 loom {
@@ -22,9 +23,10 @@ dependencies {
 	minecraft("com.mojang:minecraft:${stonecutter.current.version}")
 	mappings("net.fabricmc:yarn:${property("yarn_mappings")}:v2")
 	modImplementation("net.fabricmc:fabric-loader:0.17.3")
-
 	// Fabric API
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_version")}")
+    modImplementation("me.shedaniel.cloth:cloth-config-fabric:${property("cloth_config_version")}") { exclude("net.fabricmc.fabric-api") }
+	modImplementation("com.terraformersmc:modmenu:${property("modmenu_version")}")
 }
 
 tasks {

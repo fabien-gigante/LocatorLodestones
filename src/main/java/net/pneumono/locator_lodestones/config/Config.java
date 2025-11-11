@@ -17,7 +17,7 @@ public record Config(
         true, false, false, true, false,
         0, true, HoldingLocation.NONE, SoundEvents.BLOCK_NOTE_BLOCK_CHIME.value(),
         new ColorSettings(true,
-            new ColorProvider(null), new ColorProvider(0xBCE0EB),
+            new ColorProvider(ColorProvider.RANDOM_COLOR), new ColorProvider(0xBCE0EB),
             new ColorProvider(0x6BCF6D), new ColorProvider(0x879E7B))
     );
 

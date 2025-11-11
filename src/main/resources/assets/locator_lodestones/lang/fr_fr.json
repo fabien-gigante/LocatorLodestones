@@ -1,6 +1,28 @@
 {
     "modmenu.nameTranslation.locator_lodestones": "Locator Lodestones - Amélioré",
-    "modmenu.summaryTranslation.locator_lodestones": "Ajoute les blocs de magnétite - et plus - à la barre de localisation du joueur.",
-    "modmenu.descriptionTranslation.locator_lodestones": "Ajoute les blocs de magnétite - et plus - à la barre de localisation du joueur.\n\nLes boussoles, boussoles de récupération, boussoles magnétisées et cartes dans votre inventaire (y compris dans les bundles) ajoutent des points de repère à votre barre de localisation.",
-    "locator_lodestones.reload": "Configuration rechargée"
+    "modmenu.summaryTranslation.locator_lodestones": "Ajoute les blocs de magnétites — et plus encore — à la barre de localisation du joueur.",
+    "modmenu.descriptionTranslation.locator_lodestones": "Ajoute les blocs de magnétites — et plus encore — à la barre de localisation du joueur.\n\nLes boussoles, boussoles de récupération, boussoles magnétisées et cartes dans votre inventaire (y compris dans les sacs) ajoutent des repères à votre barre de localisation.",
+    "locator_lodestones.reload": "Configuration rechargée",
+
+    "locator_lodestones.config.title": "Locator Lodestones - Amélioré : Configuration",
+    "locator_lodestones.config.general": "Paramètres généraux",
+    "locator_lodestones.config.colors": "Paramètres des couleurs",
+    "locator_lodestones.config.tab_forces_locator_bar": "La touche Tab force l'affichage de la barre de localisation",
+    "locator_lodestones.config.tab_shows_names": "Afficher les noms avec la touche Tab",
+    "locator_lodestones.config.holding_location": "Emplacement des boussoles et cartes",
+    "locator_lodestones.config.dial_resolution": "Résolution du cadran",
+    "locator_lodestones.config.show_distance": "Afficher la distance",
+    "locator_lodestones.config.show_recovery": "Afficher les boussoles de récupération",
+    "locator_lodestones.config.show_spawn": "Afficher le point d'apparition du monde",
+    "locator_lodestones.config.show_maps": "Afficher les points d'intérêt des cartes",
+    "locator_lodestones.config.show_in_spectator": "Afficher en mode spectateur",
+    "locator_lodestones.config.holding_bundles": "Inclure les objets dans les sacs",
+    "locator_lodestones.config.clock_location": "Emplacement de la montre",
+
+    "locator_lodestones.config.colors.lodestone": "Couleur des repères magnétiques",
+    "locator_lodestones.config.colors.tooltip": "Saisissez une couleur comme « #abcdef » ou « random »",
+    "locator_lodestones.config.colors.recovery": "Couleur du repère de mort",
+    "locator_lodestones.config.colors.spawn": "Couleur du repère du point d'apparition",
+    "locator_lodestones.config.colors.dial": "Couleur du cadran",
+    "locator_lodestones.config.colors.enable_customization": "Activer la personnalisation des couleurs"
 }
