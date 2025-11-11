@@ -1,0 +1,6 @@
+{
+    "modmenu.nameTranslation.locator_lodestones": "Locator Lodestones - Amélioré",
+    "modmenu.summaryTranslation.locator_lodestones": "Ajoute les blocs de magnétite - et plus - à la barre de localisation du joueur.",
+    "modmenu.descriptionTranslation.locator_lodestones": "Ajoute les blocs de magnétite - et plus - à la barre de localisation du joueur.\n\nLes boussoles, boussoles de récupération, boussoles magnétisées et cartes dans votre inventaire (y compris dans les bundles) ajoutent des points de repère à votre barre de localisation.",
+    "locator_lodestones.reload": "Configuration rechargée"
+}
