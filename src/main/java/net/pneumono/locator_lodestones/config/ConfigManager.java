@@ -23,17 +23,18 @@ import org.jetbrains.annotations.Nullable;
 public class ConfigManager {
     private static final Path CONFIG_FILE = FabricLoader.getInstance().getConfigDir().resolve(LocatorLodestones.MOD_ID + ".json");
     private static Config CONFIG = Config.DEFAULT;
+    private static Runnable reloadCallback = null;
 
-    public static void initConfig(@Nullable Runnable reset) {
+    public static void initConfig(@Nullable Runnable reloadCallback) {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(
                 ClientCommandManager.literal(LocatorLodestones.id("reloadconfig").toString()).executes(context -> {
                     reloadConfig();
                     context.getSource().sendFeedback(Text.translatable("locator_lodestones.reload"));
-                    if (reset != null) reset.run();
                     return 1;
                 })
         ));
         reloadConfig();
+        ConfigManager.reloadCallback = reloadCallback;
     }
 
     public static Config getConfig() {
@@ -43,11 +44,13 @@ public class ConfigManager {
     public static void setConfig(Config config) {
         CONFIG = config;
         writeConfigToFile(CONFIG);
+        if (reloadCallback != null) reloadCallback.run();
     }
 
     public static void reloadConfig() {
         CONFIG = readConfigFromFile();
         writeConfigToFile(CONFIG);
+        if (reloadCallback != null) reloadCallback.run();
     }
 
     public static Config readConfigFromFile() {
