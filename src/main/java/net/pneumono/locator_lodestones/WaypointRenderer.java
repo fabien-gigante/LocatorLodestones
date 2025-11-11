@@ -91,12 +91,11 @@ public class WaypointRenderer {
         WaypointMatch best = getBestWaypoint(client, tickCounter, waypoints);
         if (best.waypoint == null || Math.abs(best.yaw) > 10) return;
 
-        distanceRendered = true;
         double dist = Math.sqrt(best.waypoint.squaredDistanceTo(client.player));
-        String label;
-        if (dist >= 10000) label = Math.round(dist/1000) + "k";
-        else if (dist >= 1000) label = Math.round(dist/100)/10f + "k";
-        else label = String.valueOf(Math.round(dist));
+        String label = getDistanceShortString(dist);
+        if (label.isEmpty()) return;
+        
+        distanceRendered = true;
         TextRenderer textRenderer = client.textRenderer;
         int width = textRenderer.getWidth(label);
         int x = Math.round((context.getScaledWindowWidth() - width) / 2);
@@ -107,6 +106,16 @@ public class WaypointRenderer {
         context.drawText(client.textRenderer, label, x, y-1, Colors.BLACK, false);
         context.drawText(client.textRenderer, label, x, y+1, Colors.BLACK, false);
         context.drawText(client.textRenderer, label, x, y, getColor(best.waypoint), false);
+    }
+
+    private static String getDistanceShortString(double distance) {
+        if (Double.isNaN(distance)) return "";
+        if (Double.isInfinite(distance)) return "∞";
+        if (distance >= 10_000_000) return Math.round(distance / 1_000_000) + "M";
+        if (distance >= 1_000_000) return Math.round(distance / 100_000) / 10f + "M";
+        if (distance >= 10_000) return Math.round(distance / 1_000) + "k";
+        if (distance >= 1_000) return Math.round(distance / 100) / 10f + "k";
+        return String.valueOf(Math.round(distance));
     }
 
     private static int getColor(TrackedWaypoint waypoint) {
