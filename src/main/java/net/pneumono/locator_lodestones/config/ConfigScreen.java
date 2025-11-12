@@ -7,7 +7,6 @@ import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.pneumono.locator_lodestones.config.Config.ColorSettings;
-import net.pneumono.locator_lodestones.config.Config.HoldingLocation;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -15,74 +14,33 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ConfigScreen {
+
     public static Screen create(Screen parent) {
-        ConfigBuilder builder = ConfigBuilder.create()
-            .setParentScreen(parent)
+        ConfigBuilder builder = ConfigBuilder.create().setParentScreen(parent)
             .setTitle(Text.translatable("locator_lodestones.config.title"));
         ConfigEntryBuilder entries = builder.entryBuilder();
-        ConfigCategory general = builder.getOrCreateCategory(Text.translatable("locator_lodestones.config.general"));
-        ConfigCategory colors = builder.getOrCreateCategory(Text.translatable("locator_lodestones.config.colors"));
-
         Config cfg = ConfigManager.getConfig();
-
-        // Store mutable holders for new values
-        AtomicBoolean tabForcesLocatorBar = new AtomicBoolean(cfg.tabForcesLocatorBar());
-        AtomicBoolean tabShowsNames = new AtomicBoolean(cfg.tabShowsNames());
-        AtomicReference<HoldingLocation> holdingLocation = new AtomicReference<>(cfg.holdingLocation());
-        AtomicInteger dialResolution = new AtomicInteger(cfg.dialResolution());
-        AtomicBoolean showDistance = new AtomicBoolean(cfg.showDistance());
-        AtomicBoolean showRecovery = new AtomicBoolean(cfg.showRecovery());
-        AtomicBoolean showSpawn = new AtomicBoolean(cfg.showSpawn());
-        AtomicBoolean showMaps = new AtomicBoolean(cfg.showMaps());
-        AtomicBoolean showInSpectator = new AtomicBoolean(cfg.showInSpectator());
-        AtomicBoolean holdingBundles = new AtomicBoolean(cfg.holdingBundles());
-        AtomicReference<HoldingLocation> clockLocation = new AtomicReference<>(cfg.clockLocation());
-        
-        AtomicBoolean colorCustomization = new AtomicBoolean(cfg.colors().colorCustomization());
-        AtomicInteger lodestoneColor = new AtomicInteger(cfg.colors().lodestoneColor().color());
-        AtomicInteger recoveryColor = new AtomicInteger(cfg.colors().recoveryColor().color());
-        AtomicInteger spawnColor = new AtomicInteger(cfg.colors().spawnColor().color());
-        AtomicInteger dialColor = new AtomicInteger(cfg.colors().dialColor().color());
-
-        // === General ===
-        general.addEntry(entries.startBooleanToggle(Text.translatable("locator_lodestones.config.tab_forces_locator_bar"), cfg.tabForcesLocatorBar())
-            .setDefaultValue(Config.DEFAULT.tabForcesLocatorBar()).setSaveConsumer(tabForcesLocatorBar::set).build());
-        general.addEntry(entries.startBooleanToggle(Text.translatable("locator_lodestones.config.tab_shows_names"), cfg.tabShowsNames())
-            .setSaveConsumer(tabShowsNames::set).build());
-        general.addEntry(entries.startEnumSelector(Text.translatable("locator_lodestones.config.holding_location"), HoldingLocation.class, cfg.holdingLocation())
-            .setDefaultValue(Config.DEFAULT.holdingLocation()).setSaveConsumer(holdingLocation::set).build());
-        general.addEntry(entries.startIntField(Text.translatable("locator_lodestones.config.dial_resolution"), cfg.dialResolution())
-            .setMin(0).setMax(72).setDefaultValue(Config.DEFAULT.dialResolution()).setSaveConsumer(dialResolution::set).build());
-        general.addEntry(entries.startBooleanToggle(Text.translatable("locator_lodestones.config.show_distance"), cfg.showDistance())
-            .setDefaultValue(Config.DEFAULT.showDistance()).setSaveConsumer(showDistance::set).build());
-        general.addEntry(entries.startBooleanToggle(Text.translatable("locator_lodestones.config.show_recovery"), cfg.showRecovery())
-            .setDefaultValue(Config.DEFAULT.showRecovery()).setSaveConsumer(showRecovery::set).build());
-        general.addEntry(entries.startBooleanToggle(Text.translatable("locator_lodestones.config.show_spawn"), cfg.showSpawn())
-            .setDefaultValue(Config.DEFAULT.showSpawn()).setSaveConsumer(showSpawn::set).build());
-        general.addEntry(entries.startBooleanToggle(Text.translatable("locator_lodestones.config.show_maps"), cfg.showMaps())
-            .setDefaultValue(Config.DEFAULT.showMaps()).setSaveConsumer(showMaps::set).build());
-        general.addEntry(entries.startBooleanToggle(Text.translatable("locator_lodestones.config.show_in_spectator"), cfg.showInSpectator())
-            .setDefaultValue(Config.DEFAULT.showInSpectator()).setSaveConsumer(showInSpectator::set).build());
-        general.addEntry(entries.startBooleanToggle(Text.translatable("locator_lodestones.config.holding_bundles"), cfg.holdingBundles())
-            .setDefaultValue(Config.DEFAULT.holdingBundles()).setSaveConsumer(holdingBundles::set).build());
-        general.addEntry(entries.startEnumSelector(Text.translatable("locator_lodestones.config.clock_location"), HoldingLocation.class, cfg.clockLocation())
-            .setDefaultValue(Config.DEFAULT.clockLocation()).setSaveConsumer(clockLocation::set).build());      
-
-        // === Colors ===
-        colors.addEntry(entries.startBooleanToggle(Text.translatable("locator_lodestones.config.colors.enable_customization"), cfg.colors().colorCustomization())
-                .setDefaultValue(Config.DEFAULT.colors().colorCustomization()).setSaveConsumer(colorCustomization::set).build());
-        colors.addEntry(entries.startDropdownMenu(Text.translatable("locator_lodestones.config.colors.lodestone"), cfg.colors().lodestoneColor().asString(), v -> v)
-                .setSelections(List.of("random", cfg.colors().lodestoneColor().asString())).setSuggestionMode(true)
-                .setDefaultValue(Config.DEFAULT.colors().lodestoneColor().asString()).setTooltip(Text.translatable("locator_lodestones.config.colors.tooltip"))
-                .setSaveConsumer(value -> lodestoneColor.set(ColorProvider.validate(value).color())).build());
-        colors.addEntry(entries.startColorField(Text.translatable("locator_lodestones.config.colors.recovery"), cfg.colors().recoveryColor().color())
-                .setDefaultValue(Config.DEFAULT.colors().recoveryColor().color()).setSaveConsumer(recoveryColor::set).build());
-        colors.addEntry(entries.startColorField(Text.translatable("locator_lodestones.config.colors.spawn"), cfg.colors().spawnColor().color())
-                .setDefaultValue(Config.DEFAULT.colors().spawnColor().color()).setSaveConsumer(spawnColor::set).build());
-        colors.addEntry(entries.startColorField(Text.translatable("locator_lodestones.config.colors.dial"), cfg.colors().dialColor().color())
-                .setDefaultValue(Config.DEFAULT.colors().dialColor().color()).setSaveConsumer(dialColor::set).build());
-
-        // === When "Save" is clicked ===
+        // General
+        ConfigCategory general = builder.getOrCreateCategory(Text.translatable("locator_lodestones.config.general"));
+        var tabForcesLocatorBar = addToggle(entries,general,"tab_forces_locator_bar",cfg.tabForcesLocatorBar(),Config.DEFAULT.tabForcesLocatorBar());
+        var tabShowsNames = addToggle(entries,general,"tab_shows_names",cfg.tabShowsNames(),Config.DEFAULT.tabShowsNames());
+        var holdingLocation = addSelector(entries, general, "holding_location", cfg.holdingLocation(),Config.DEFAULT.holdingLocation());
+        var dialResolution = addIntField(entries, general, "dial_resolution", cfg.dialResolution(),0,72,Config.DEFAULT.dialResolution());
+        var showDistance = addToggle(entries,general,"show_distance",cfg.showDistance(),Config.DEFAULT.showDistance());
+        var showRecovery = addToggle(entries,general,"show_recovery",cfg.showRecovery(),Config.DEFAULT.showRecovery());
+        var showSpawn = addToggle(entries,general,"show_spawn",cfg.showSpawn(),Config.DEFAULT.showSpawn());
+        var showMaps = addToggle(entries,general,"show_maps",cfg.showMaps(),Config.DEFAULT.showMaps());
+        var showInSpectator = addToggle(entries,general,"show_in_spectator",cfg.showInSpectator(),Config.DEFAULT.showInSpectator());
+        var holdingBundles = addToggle(entries,general,"holding_bundles",cfg.holdingBundles(),Config.DEFAULT.holdingBundles());
+        var clockLocation = addSelector(entries, general, "clock_location", cfg.clockLocation(),Config.DEFAULT.clockLocation());
+        // Colors
+        ConfigCategory colors = builder.getOrCreateCategory(Text.translatable("locator_lodestones.config.colors"));
+        var colorCustomization = addToggle(entries,colors,"colors.enable_customization",cfg.colors().colorCustomization(),Config.DEFAULT.colors().colorCustomization());
+        var lodestoneColor = addColorOrRandomField(entries,colors,"colors.lodestone",cfg.colors().lodestoneColor(),Config.DEFAULT.colors().lodestoneColor());
+        var recoveryColor = addColorField(entries,colors,"colors.recovery",cfg.colors().recoveryColor(),Config.DEFAULT.colors().recoveryColor());
+        var spawnColor = addColorField(entries,colors,"colors.spawn",cfg.colors().spawnColor(),Config.DEFAULT.colors().spawnColor());
+        var dialColor = addColorField(entries,colors,"colors.dial",cfg.colors().dialColor(),Config.DEFAULT.colors().dialColor());
+        // When "Save" is clicked
         builder.setSavingRunnable(() -> {
             ConfigManager.setConfig( new Config(
                     tabForcesLocatorBar.get(), tabShowsNames.get(), holdingLocation.get(), showRecovery.get(),
@@ -95,7 +53,39 @@ public class ConfigScreen {
                     )
             ));
         });
-
         return builder.build();
     } 
+
+    private static AtomicBoolean addToggle(ConfigEntryBuilder entries, ConfigCategory category, String key, boolean value, boolean def) {
+        AtomicBoolean mutable = new AtomicBoolean(value);
+        category.addEntry(entries.startBooleanToggle(Text.translatable("locator_lodestones.config."+key), value)
+            .setDefaultValue(def).setSaveConsumer(mutable::set).build());
+        return mutable;
+    }
+    private static <T extends Enum<T>> AtomicReference<T> addSelector(ConfigEntryBuilder entries, ConfigCategory category, String key, T value, T def) {
+        AtomicReference<T> mutable = new AtomicReference<T>(value);
+        category.addEntry(entries.startEnumSelector(Text.translatable("locator_lodestones.config."+key), value.getDeclaringClass(), value)
+            .setDefaultValue(def).setSaveConsumer(mutable::set).build());
+        return mutable;
+    }
+    private static AtomicInteger addIntField(ConfigEntryBuilder entries, ConfigCategory category, String key, int value, int min, int max, int def) {
+        AtomicInteger mutable = new AtomicInteger(value);
+        category.addEntry(entries.startIntField(Text.translatable("locator_lodestones.config."+key), value)
+            .setMin(min).setMax(max).setDefaultValue(def).setSaveConsumer(mutable::set).build());
+        return mutable;
+    }    
+    private static AtomicInteger addColorField(ConfigEntryBuilder entries, ConfigCategory category, String key, ColorProvider value, ColorProvider def) {
+        AtomicInteger mutable = new AtomicInteger(value.color());
+        category.addEntry(entries.startColorField(Text.translatable("locator_lodestones.config."+key), value.color())
+            .setDefaultValue(def.color()).setSaveConsumer(mutable::set).build());
+        return mutable;
+    }
+    private static AtomicInteger addColorOrRandomField(ConfigEntryBuilder entries, ConfigCategory category, String key, ColorProvider value, ColorProvider def) {
+        AtomicInteger mutable = new AtomicInteger(value.color());
+        category.addEntry(entries.startDropdownMenu(Text.translatable("locator_lodestones.config."+key), value.asString(), v -> v)
+                .setSelections(List.of("random",value.asString())).setSuggestionMode(true)
+                .setDefaultValue(def.asString()).setTooltip(Text.translatable("locator_lodestones.config.colors.tooltip"))
+                .setSaveConsumer(v -> mutable.set(ColorProvider.validate(v).color())).build());
+        return mutable;
+    }          
 }
