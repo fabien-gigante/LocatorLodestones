@@ -21,6 +21,7 @@
 
     "locator_lodestones.config.colors.lodestone": "Couleur des repères magnétiques",
     "locator_lodestones.config.colors.tooltip": "Saisissez une couleur comme « #abcdef » ou « random »",
+    "locator_lodestones.config.colors.error": "Couleur invalide !",
     "locator_lodestones.config.colors.recovery": "Couleur du repère de mort",
     "locator_lodestones.config.colors.spawn": "Couleur du repère du point d'apparition",
     "locator_lodestones.config.colors.dial": "Couleur du cadran",

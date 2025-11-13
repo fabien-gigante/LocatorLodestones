@@ -21,6 +21,7 @@
 
     "locator_lodestones.config.colors.lodestone": "Lodestone Waypoint Color",
     "locator_lodestones.config.colors.tooltip": "Type a color like #abcdef or 'random'",
+    "locator_lodestones.config.colors.error": "Not a valid color!",
     "locator_lodestones.config.colors.recovery": "Death Waypoint Color",
     "locator_lodestones.config.colors.spawn": "World Spawn Waypoint Color",
     "locator_lodestones.config.colors.dial": "Dial Color",
