@@ -25,5 +25,10 @@
     "locator_lodestones.config.colors.recovery": "Couleur du repère de mort",
     "locator_lodestones.config.colors.spawn": "Couleur du repère du point d'apparition",
     "locator_lodestones.config.colors.dial": "Couleur du cadran",
-    "locator_lodestones.config.colors.enable_customization": "Activer la personnalisation des couleurs"
+    "locator_lodestones.config.colors.enable_customization": "Activer la personnalisation des couleurs",
+    "locator_lodestones.config.enum.none": "Aucun",
+    "locator_lodestones.config.enum.hands": "Mains",
+    "locator_lodestones.config.enum.hotbar": "Barre d'action",
+    "locator_lodestones.config.enum.inventory": "Inventaire"
+
 }

@@ -25,5 +25,9 @@
     "locator_lodestones.config.colors.recovery": "Death Waypoint Color",
     "locator_lodestones.config.colors.spawn": "World Spawn Waypoint Color",
     "locator_lodestones.config.colors.dial": "Dial Color",
-    "locator_lodestones.config.colors.enable_customization": "Enable Color Customization"
+    "locator_lodestones.config.colors.enable_customization": "Enable Color Customization",
+    "locator_lodestones.config.enum.none": "None",
+    "locator_lodestones.config.enum.hands": "Hands",
+    "locator_lodestones.config.enum.hotbar": "Hotbar",
+    "locator_lodestones.config.enum.inventory": "Inventory"
 }
