@@ -92,3 +92,8 @@ Configuration file format has been updated as follows (default values shown):
   }
 }
 ```
+
+An interactive configuration screen is available when  ModMenu and Clothconfig are present:
+
+![Config menu](https://github.com/user-attachments/assets/55fbbf30-00b9-4241-8874-20dd19578ebd)
+
