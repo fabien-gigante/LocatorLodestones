@@ -22,6 +22,8 @@ The mod also checks bundles, so you can place all of your compasses in a bundle,
 
 # Additional features from this fork
 
+![Locator Lodestones - Enhanced - icon](images/icon.png)
+
 Only consider compasses held by the player within a configurable location:
 - whole inventory (default),
 - hotbar only,
