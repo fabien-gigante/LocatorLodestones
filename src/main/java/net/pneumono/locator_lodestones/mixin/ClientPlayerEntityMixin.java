@@ -15,7 +15,7 @@ import com.mojang.authlib.GameProfile;
 public abstract class ClientPlayerEntityMixin extends PlayerEntity {
     private ClientPlayerEntityMixin(World world, GameProfile profile) { super(world, profile); }
 
-    @Inject(method = "setExperience", at = @At("HEAD"),cancellable = true)
+    @Inject(method = "setExperience", at = @At("HEAD"), cancellable = true)
     public void setExperience(float progress, int total, int level, CallbackInfo ci) {
         if (progress==experienceProgress && total==totalExperience && level==experienceLevel)
             ci.cancel();

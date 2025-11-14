@@ -10,10 +10,8 @@ import net.minecraft.component.type.LodestoneTrackerComponent;
 import net.minecraft.component.type.MapDecorationsComponent;
 import net.minecraft.component.type.MapIdComponent;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.map.MapState;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.GlobalPos;
@@ -30,15 +28,33 @@ public class WaypointTracker extends AbstractTracker {
     private static final List<TrackedWaypoint> COMPASS_DIAL_WAYPOINTS = new ArrayList<>();
     private final Map<Either<UUID, String>, TrackedWaypoint> WAYPOINTS = new HashMap<>();
 
-    public Collection<TrackedWaypoint> getWaypoints() {
-        return WAYPOINTS.values();
+    @Override
+    public void init() {
+        super.init();
+        this.buildCompassDial();
     }
 
     @Override
     public void reset() {
         super.reset();
         WAYPOINTS.clear();
+        this.buildCompassDial();
     }
+
+    public Collection<TrackedWaypoint> getWaypoints() {
+        return WAYPOINTS.values();
+    }
+
+    private void buildCompassDial() {
+        COMPASS_DIAL_WAYPOINTS.clear();
+        int dialResolution = ConfigManager.getConfig().dialResolution();
+        for(int i = 0; i < dialResolution; i++) {
+            int azimuth = i * 360 / dialResolution;
+            var style = azimuth % 90 == 0 ? LocatorLodestones.COMPASS_CARDINAL_STYLE.get(azimuth / 90) :
+                        azimuth % 45 == 0 ? LocatorLodestones.COMPASS_DIVISION_STYLE : LocatorLodestones.COMPASS_DIVISION_SMALL_STYLE;
+            COMPASS_DIAL_WAYPOINTS.add(new DialWaypoint("dial_" + azimuth, style, (float)(i * Math.TAU / dialResolution)));
+        }
+    }    
 
     @Override
     public void update(MinecraftClient client) {
@@ -60,23 +76,6 @@ public class WaypointTracker extends AbstractTracker {
             if (!WAYPOINTS.containsKey(oldWaypoint.getSource())) {
                 waypointHandler.onUntrack(oldWaypoint);
             }
-        }
-    }
-
-    @Override
-    public void init() {
-        super.init();
-        this.buildCompassDial();
-    }
-
-    private void buildCompassDial() {
-        COMPASS_DIAL_WAYPOINTS.clear();
-        int dialResolution = ConfigManager.getConfig().dialResolution();
-        for(int i = 0; i < dialResolution; i++) {
-            int azimuth = i * 360 / dialResolution;
-            var style = azimuth % 90 == 0 ? LocatorLodestones.COMPASS_CARDINAL_STYLE.get(azimuth / 90) :
-                        azimuth % 45 == 0 ? LocatorLodestones.COMPASS_DIVISION_STYLE : LocatorLodestones.COMPASS_DIVISION_SMALL_STYLE;
-            COMPASS_DIAL_WAYPOINTS.add(new DialWaypoint("dial_" + azimuth, style, (float)(i * Math.TAU / dialResolution)));
         }
     }
 
@@ -148,18 +147,18 @@ public class WaypointTracker extends AbstractTracker {
         }
 
         if (ConfigManager.getConfig().showMaps() && stack.isOf(Items.FILLED_MAP)) {
-            MapState mapState = FilledMapItem.getMapState(stack, world);
-            if (mapState != null && mapState.dimension == dimension) {
-                MapIdComponent mapIdComponent = stack.get(DataComponentTypes.MAP_ID);
-                MapDecorationsComponent mapDecorationsComponent = stack.get(DataComponentTypes.MAP_DECORATIONS);
-                if (mapIdComponent != null && mapDecorationsComponent != null) {
-                    mapDecorationsComponent.decorations().forEach((key, deco) -> {
-                        Optional<Text> name = (Object)deco instanceof INamed named ? named.getName() : Optional.empty();
+            MapIdComponent mapIdComponent = stack.get(DataComponentTypes.MAP_ID);
+            MapDecorationsComponent mapDecorationsComponent = stack.get(DataComponentTypes.MAP_DECORATIONS);
+            if (mapIdComponent != null && mapDecorationsComponent != null) {
+                mapDecorationsComponent.decorations().forEach((key, deco) -> {
+                    Optional<RegistryKey<World>> mapDimension = (Object)deco instanceof IDecorationExt ext ? ext.getDimension() : Optional.empty();
+                    if (mapDimension.orElse(World.OVERWORLD) == dimension) {
+                        Optional<Text> name = (Object)deco instanceof IDecorationExt ext ? ext.getName() : Optional.empty();
                         if (name.isEmpty()) name = getText(stack);
                         TrackedWaypoint waypoint = new MapWaypoint("map_" + mapIdComponent.id() + "_" + key, deco, name);
                         waypoints.add(waypoint);
-                    });
-                }
+                    }
+                });
             }
         }
 

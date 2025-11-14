@@ -12,9 +12,8 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.waypoint.TrackedWaypoint;
 import net.minecraft.world.waypoint.Waypoint;
 import net.minecraft.world.waypoint.WaypointStyle;
-import net.pneumono.locator_lodestones.INamed;
 
-public class NamedWaypoint extends TrackedWaypoint.Positional implements INamed {
+public class NamedWaypoint extends TrackedWaypoint.Positional {
     protected Optional<Text> name = Optional.empty();
 
     protected NamedWaypoint(String source, Config config, Vec3i pos, Optional<Text> name) {
@@ -25,10 +24,7 @@ public class NamedWaypoint extends TrackedWaypoint.Positional implements INamed 
         this(source, configFromStyle(style, color), pos, name);
     }
 
-    @Override
     public Optional<Text> getName() { return name; }
-    @Override
-    public void setName(Optional<Text> name) { this.name = name; }
 
     private static Config configFromStyle(RegistryKey<WaypointStyle> style, @Nullable Integer color) {
         Waypoint.Config config = new Waypoint.Config();

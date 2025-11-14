@@ -18,7 +18,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.pneumono.locator_lodestones.INamed;
+import net.pneumono.locator_lodestones.IDecorationExt;
 
 public class MapDecorationsHelper {
     private static Set<RegistryEntry<MapDecorationType>> BANNER_TYPES = Set.of(
@@ -27,9 +27,11 @@ public class MapDecorationsHelper {
         MapDecorationTypes.BANNER_LIGHT_GRAY, MapDecorationTypes.BANNER_CYAN, MapDecorationTypes.BANNER_PURPLE, MapDecorationTypes.BANNER_BLUE,
         MapDecorationTypes.BANNER_BROWN, MapDecorationTypes.BANNER_GREEN, MapDecorationTypes.BANNER_RED, MapDecorationTypes.BANNER_BLACK);
 
-    private static void addBannerComponent(ItemStack stack, BlockPos pos, String id, RegistryEntry<MapDecorationType> decorationType, Optional<Text> name) {
+    private static void addBannerComponent(ItemStack stack, World world, BlockPos pos, String id, RegistryEntry<MapDecorationType> decorationType, Optional<Text> name) {
         MapDecorationsComponent.Decoration decoration = new MapDecorationsComponent.Decoration(decorationType, (double)pos.getX(), (double)pos.getZ(), 180.0F);
-        if ((Object)decoration instanceof INamed named) named.setName(name);
+        if ((Object)decoration instanceof IDecorationExt ext) {
+            ext.setName(name); ext.setDimension(Optional.of(world.getRegistryKey()));
+        }
         stack.apply(DataComponentTypes.MAP_DECORATIONS, MapDecorationsComponent.DEFAULT, decorations -> decorations.with(id, decoration));
     }
 
@@ -48,7 +50,7 @@ public class MapDecorationsHelper {
             .filter(m -> m.pos().getX() == pos.getX() && m.pos().getZ() == pos.getZ() && BANNER_TYPES.contains(m.getDecorationType()))
             .findAny();
         if (found.isPresent())
-            addBannerComponent(stack, pos, found.get().getKey(), found.get().getDecorationType(), found.get().name());
+            addBannerComponent(stack, world, pos, found.get().getKey(), found.get().getDecorationType(), found.get().name());
         else {
             MapBannerMarker marker = MapBannerMarker.fromWorldBlock(world, pos);
             removeBannerComponents(stack, key -> key.equals(marker.getKey()));
