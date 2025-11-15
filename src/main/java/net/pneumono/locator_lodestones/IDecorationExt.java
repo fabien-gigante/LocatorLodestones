@@ -7,6 +7,8 @@ import net.minecraft.text.Text;
 import net.minecraft.world.World;
 
 public interface IDecorationExt {
+    Optional<Double> getY();
+    void setY(Optional<Double> y);
     Optional<Text> getName();
     void setName(Optional<Text> name);
     Optional<RegistryKey<World>> getDimension();

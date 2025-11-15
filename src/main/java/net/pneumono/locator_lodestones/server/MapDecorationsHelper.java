@@ -32,7 +32,8 @@ public class MapDecorationsHelper {
     private static void addBannerComponent(ItemStack stack, World world, BlockPos pos, String id, RegistryEntry<MapDecorationType> decorationType, Optional<Text> name) {
         MapDecorationsComponent.Decoration decoration = new MapDecorationsComponent.Decoration(decorationType, (double)pos.getX(), (double)pos.getZ(), 180.0F);
         if ((Object)decoration instanceof IDecorationExt ext) {
-            ext.setName(name); ext.setDimension(Optional.of(world.getRegistryKey()));
+            ext.setName(name);  ext.setY(Optional.of((double)pos.getY()));
+            ext.setDimension(Optional.of(world.getRegistryKey()));
         }
         stack.apply(DataComponentTypes.MAP_DECORATIONS, MapDecorationsComponent.DEFAULT, decorations -> decorations.with(id, decoration));
     }

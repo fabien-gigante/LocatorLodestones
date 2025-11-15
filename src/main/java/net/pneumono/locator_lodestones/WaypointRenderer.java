@@ -13,6 +13,12 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.waypoint.TrackedWaypoint;
 import net.minecraft.world.waypoint.Waypoint;
+import net.minecraft.entity.Entity;
+//? if >=1.21.9 {
+import net.minecraft.world.World;
+import net.minecraft.world.waypoint.EntityTickProgress;
+//?}
+
 import net.pneumono.locator_lodestones.config.Config;
 import net.pneumono.locator_lodestones.config.ConfigManager;
 import net.pneumono.locator_lodestones.waypoints.DialWaypoint;
@@ -22,12 +28,6 @@ import net.pneumono.locator_lodestones.waypoints.NamedWaypoint;
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Stream;
-
-//? if >=1.21.9 {
-import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
-import net.minecraft.world.waypoint.EntityTickProgress;
-//?}
 
 public class WaypointRenderer {
 

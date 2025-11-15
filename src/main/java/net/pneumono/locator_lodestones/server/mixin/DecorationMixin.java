@@ -24,6 +24,7 @@ public abstract class DecorationMixin implements IDecorationExt {
 
     private Optional<Text> name = Optional.empty();
     private Optional<RegistryKey<World>> dimension = Optional.empty();
+    private Optional<Double> y = Optional.empty();
 
     @Override
     public Optional<Text> getName() { return name; }
@@ -33,21 +34,27 @@ public abstract class DecorationMixin implements IDecorationExt {
     public Optional<RegistryKey<World>> getDimension() { return dimension; }
     @Override
     public void setDimension(Optional<RegistryKey<World>> dimension) { this.dimension = dimension; }
+    @Override
+    public Optional<Double> getY() { return y; }
+    @Override
+    public void setY(Optional<Double> y) { this.y = y; }
 
     static {
         CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
                 MapDecorationType.CODEC.fieldOf("type").forGetter(d -> d.type()),
                 Codec.DOUBLE.fieldOf("x").forGetter(d -> d.x()),                
+                Codec.DOUBLE.optionalFieldOf("y").forGetter(d -> ((DecorationMixin)(Object)d).y),
                 Codec.DOUBLE.fieldOf("z").forGetter(d -> d.z()),
                 Codec.FLOAT.fieldOf("rotation").forGetter(d -> d.rotation()),
                 TextCodecs.CODEC.optionalFieldOf("name").forGetter(d -> ((DecorationMixin)(Object)d).name),
                 World.CODEC.optionalFieldOf("dimension").forGetter(d -> ((DecorationMixin)(Object)d).dimension)
             ).apply(instance,
-                (type, x, z, rotation, name, dimension) -> {
+                (type, x, y, z, rotation, name, dimension) -> {
                     MapDecorationsComponent.Decoration decoration = new MapDecorationsComponent.Decoration(type, x, z, rotation);
                     ((DecorationMixin)(Object)decoration).name = name;
                     ((DecorationMixin)(Object)decoration).dimension = dimension;
+                    ((DecorationMixin)(Object)decoration).y = y;
                     return decoration;
                 })
         );

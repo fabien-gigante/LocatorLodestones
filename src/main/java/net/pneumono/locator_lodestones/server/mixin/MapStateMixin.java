@@ -1,7 +1,6 @@
 package net.pneumono.locator_lodestones.server.mixin;
 
 import net.pneumono.locator_lodestones.server.MapDecorationsHelper;
-
 import net.minecraft.item.map.MapDecorationType;
 import net.minecraft.item.map.MapState;
 import net.minecraft.registry.RegistryKey;
@@ -33,9 +32,18 @@ public abstract class MapStateMixin {
 
     // MC-142686 : banners can be added / removed on maps from other dimensions, let's fix that
     @Inject(method = "addBanner", at = @At("HEAD"), cancellable = true)
-    public void checkBannerDimension(WorldAccess worldAccess, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+    private void checkBannerDimension(WorldAccess worldAccess, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         if (worldAccess instanceof World world && world.getRegistryKey() != this.dimension) {
             cir.setReturnValue(false); cir.cancel();
         }
     }
+
+    /*
+    NOTE: Structures don't seem to have a relevant Y, so the following is very relevant after all...
+
+    @Inject(method = "addDecorationsNbt", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
+    private static void extendDecoration(ItemStack stack, BlockPos pos, String id, RegistryEntry<MapDecorationType> decorationType, CallbackInfo ci, Decoration decoration) {
+        if ((Object) decoration instanceof IDecorationExt ext) ext.setY(Optional.of(pos.toCenterPos().getY()));
+    }
+    */
 }
