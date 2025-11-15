@@ -9,13 +9,13 @@ import net.minecraft.sound.SoundEvents;
 public record Config(
     boolean tabForcesLocatorBar, boolean tabShowsNames, HoldingLocation holdingLocation,
     boolean showRecovery, boolean showSpawn, boolean showMaps, boolean holdingBundles, boolean showInSpectator,
-    int dialResolution, boolean showDistance, HoldingLocation clockLocation, SoundEvent clockSound,
+    int dialResolution, DistanceType showDistance, HoldingLocation clockLocation, SoundEvent clockSound,
     ColorSettings colors) {
 
     public static final Config DEFAULT = new Config(
         true, true, HoldingLocation.INVENTORY,
         true, false, false, true, false,
-        0, true, HoldingLocation.NONE, SoundEvents.BLOCK_NOTE_BLOCK_CHIME.value(),
+        0, DistanceType.EUCLIDEAN, HoldingLocation.NEVER, SoundEvents.BLOCK_NOTE_BLOCK_CHIME.value(),
         new ColorSettings(true,
             new ColorProvider(ColorProvider.RANDOM_COLOR), new ColorProvider(0xBCE0EB),
             new ColorProvider(0x6BCF6D), new ColorProvider(0x879E7B))
@@ -31,17 +31,26 @@ public record Config(
             Codec.BOOL.fieldOf("holding_bundles").forGetter(Config::holdingBundles),
             Codec.BOOL.fieldOf("show_in_spectator").forGetter(Config::showInSpectator),
             Codec.INT.fieldOf("dial_resolution").forGetter(Config::dialResolution),
-            Codec.BOOL.fieldOf("show_distance").forGetter(Config::showDistance),
+            DistanceType.CODEC.fieldOf("show_distance").forGetter(Config::showDistance),
             HoldingLocation.CODEC.fieldOf("clock_location").forGetter(Config::clockLocation),
             SoundEvent.CODEC.fieldOf("clock_sound").forGetter(Config::clockSound),
             ColorSettings.CODEC.fieldOf("colors").forGetter(Config::colors)
     ).apply(instance, Config::new));
 
     public enum HoldingLocation {
-        NONE, INVENTORY, HOTBAR, HANDS;
+        NEVER, INVENTORY, HOTBAR, HANDS;
 
         public static final Codec<HoldingLocation> CODEC = Codec.STRING.xmap(
             str -> HoldingLocation.valueOf(str.toUpperCase()),
+            loc -> loc.name().toLowerCase()
+        );
+    }
+
+    public enum DistanceType {
+        NEVER, HORIZONTAL, EUCLIDEAN;
+
+        public static final Codec<DistanceType> CODEC = Codec.STRING.xmap(
+            str -> DistanceType.valueOf(str.toUpperCase()),
             loc -> loc.name().toLowerCase()
         );
     }

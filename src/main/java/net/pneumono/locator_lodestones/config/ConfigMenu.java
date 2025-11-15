@@ -36,7 +36,7 @@ public class ConfigMenu implements ModMenuApi {
         var tabShowsNames = addToggle("tab_shows_names", cfg.tabShowsNames(), Config.DEFAULT.tabShowsNames());
         var holdingLocation = addSelector( "holding_location", cfg.holdingLocation(), Config.DEFAULT.holdingLocation());
         var dialResolution = addSlider("dial_resolution", cfg.dialResolution(),0,72, Config.DEFAULT.dialResolution());
-        var showDistance = addToggle("show_distance", cfg.showDistance(), Config.DEFAULT.showDistance());
+        var showDistance = addSelector("show_distance", cfg.showDistance(), Config.DEFAULT.showDistance());
         var showRecovery = addToggle("show_recovery", cfg.showRecovery(), Config.DEFAULT.showRecovery());
         var showSpawn = addToggle("show_spawn", cfg.showSpawn(), Config.DEFAULT.showSpawn());
         var showMaps = addToggle("show_maps", cfg.showMaps(), Config.DEFAULT.showMaps());

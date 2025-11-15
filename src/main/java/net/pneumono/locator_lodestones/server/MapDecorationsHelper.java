@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.MapDecorationsComponent;
@@ -46,16 +45,14 @@ public class MapDecorationsHelper {
             stack.set(DataComponentTypes.MAP_DECORATIONS, new MapDecorationsComponent(map));
     }
 
-    private static Stream<MapBannerMarker> getBanners(World world, ItemStack stack) {
-        MapState mapState = FilledMapItem.getMapState(stack, world);
-        if (mapState == null || !mapState.isDirty() || mapState.dimension != world.getRegistryKey())
-            return Stream.empty();
-        else
-            return mapState.getBanners().stream();
+    private static boolean needsUpdate(MapState mapState, World world) {
+        return mapState != null && mapState.isDirty() & mapState.dimension == world.getRegistryKey();
     }
 
     public static void updateBannerComponent(World world, ItemStack stack, BlockPos pos) {
-        var found = getBanners(world, stack)
+        MapState mapState = FilledMapItem.getMapState(stack, world);
+        if (!needsUpdate(mapState, world)) return;
+        var found = mapState.getBanners().stream()
             .filter(m -> m.pos().getX() == pos.getX() && m.pos().getZ() == pos.getZ() && isBanner(m.getDecorationType()))
             .findAny();
         if (found.isPresent())
@@ -67,7 +64,9 @@ public class MapDecorationsHelper {
     }
 
     public static void updateBannerComponents(World world, ItemStack stack) {
-        var keys = getBanners(world, stack).map(MapBannerMarker::getKey).collect(Collectors.toSet());
+        MapState mapState = FilledMapItem.getMapState(stack, world);
+        if (!needsUpdate(mapState, world)) return;
+        var keys = mapState.getBanners().stream().map(MapBannerMarker::getKey).collect(Collectors.toSet());
         removeBannerComponents(stack, key -> !keys.contains(key));
     }    
 }

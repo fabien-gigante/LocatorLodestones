@@ -10,8 +10,10 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.waypoint.TrackedWaypoint;
 import net.minecraft.world.waypoint.Waypoint;
+import net.pneumono.locator_lodestones.config.Config;
 import net.pneumono.locator_lodestones.config.ConfigManager;
 import net.pneumono.locator_lodestones.waypoints.DialWaypoint;
 import net.pneumono.locator_lodestones.waypoints.MapWaypoint;
@@ -56,7 +58,7 @@ public class WaypointRenderer {
 
     public static void render(MinecraftClient client, DrawContext context, RenderTickCounter tickCounter, int centerY) {
         distanceRendered = false;
-        if (ConfigManager.getConfig().showDistance())
+        if (ConfigManager.getConfig().showDistance() != Config.DistanceType.NEVER)
             renderDistance(client, context, tickCounter, centerY);
         if (ConfigManager.getConfig().tabShowsNames() && client.options.playerListKey.isPressed())
             renderNames(client, context, tickCounter, centerY);
@@ -83,6 +85,17 @@ public class WaypointRenderer {
         return MathHelper.ceil((context.getScaledWindowWidth() - 9) / 2.0F) + (int)(relativeYaw * 173.0 / 2.0 / 60.0);
     }
 
+    private static double getDistance(Entity player, TrackedWaypoint waypoint) {
+        double d2;
+        if (ConfigManager.getConfig().showDistance() == Config.DistanceType.HORIZONTAL && waypoint instanceof TrackedWaypoint.Positional wp) {
+            Vec3d pos = Vec3d.ofCenter(wp.pos);
+            double dx = pos.getX() - player.getX(), dz = pos.getZ() - player.getZ();
+            d2 = dx*dx + dz*dz;
+        } else {
+            d2 = waypoint.squaredDistanceTo(player);
+        }
+        return Math.sqrt(d2);
+    }
 
     protected static void renderDistance(MinecraftClient client, DrawContext context, RenderTickCounter tickCounter, int centerY) {
         ClientWaypointHandler handler = client.player.networkHandler.getWaypointHandler();
@@ -91,7 +104,7 @@ public class WaypointRenderer {
         WaypointMatch best = getBestWaypoint(client, tickCounter, waypoints);
         if (best.waypoint == null || Math.abs(best.yaw) > 10) return;
 
-        double dist = Math.sqrt(best.waypoint.squaredDistanceTo(client.player));
+        double dist = getDistance(client.player, best.waypoint);
         String label = getDistanceShortString(dist);
         if (label.isEmpty()) return;
         

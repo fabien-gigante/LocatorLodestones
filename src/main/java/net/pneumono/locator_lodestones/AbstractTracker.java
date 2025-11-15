@@ -46,7 +46,7 @@ public abstract class AbstractTracker {
 
         // Compute stacks based on specified location
         switch(location) {
-            case Config.HoldingLocation.NONE:
+            case Config.HoldingLocation.NEVER:
                 return stacks;
             case Config.HoldingLocation.HANDS:
                 stacks.add(player.getInventory().getSelectedStack());
