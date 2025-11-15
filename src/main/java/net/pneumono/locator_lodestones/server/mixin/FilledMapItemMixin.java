@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(FilledMapItem.class)
-public class FilledMapItemMixin {
+public abstract class FilledMapItemMixin {
     @Inject(
         method = "useOnBlock",
         at = @At(

@@ -4,7 +4,8 @@
     "compatibilityLevel": "JAVA_21",
     "mixins": [
         "FilledMapItemMixin", 
-        "DecorationMixin"
+        "DecorationMixin",
+        "MapStateMixin"
     ],
     "injectors": {
         "defaultRequire": 1

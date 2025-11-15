@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.MapDecorationsComponent;
@@ -27,6 +28,8 @@ public class MapDecorationsHelper {
         MapDecorationTypes.BANNER_LIGHT_GRAY, MapDecorationTypes.BANNER_CYAN, MapDecorationTypes.BANNER_PURPLE, MapDecorationTypes.BANNER_BLUE,
         MapDecorationTypes.BANNER_BROWN, MapDecorationTypes.BANNER_GREEN, MapDecorationTypes.BANNER_RED, MapDecorationTypes.BANNER_BLACK);
 
+    public static boolean isBanner(RegistryEntry<MapDecorationType> type) { return BANNER_TYPES.contains(type); }
+
     private static void addBannerComponent(ItemStack stack, World world, BlockPos pos, String id, RegistryEntry<MapDecorationType> decorationType, Optional<Text> name) {
         MapDecorationsComponent.Decoration decoration = new MapDecorationsComponent.Decoration(decorationType, (double)pos.getX(), (double)pos.getZ(), 180.0F);
         if ((Object)decoration instanceof IDecorationExt ext) {
@@ -39,15 +42,21 @@ public class MapDecorationsHelper {
         MapDecorationsComponent component = stack.get(DataComponentTypes.MAP_DECORATIONS);
         if (component == null || component.decorations().isEmpty()) return;
         var map = new HashMap<>(component.decorations());
-        if (map.entrySet().removeIf(entry -> BANNER_TYPES.contains(entry.getValue().type()) && condition.test(entry.getKey())))
+        if (map.entrySet().removeIf(entry -> isBanner(entry.getValue().type()) && condition.test(entry.getKey())))
             stack.set(DataComponentTypes.MAP_DECORATIONS, new MapDecorationsComponent(map));
     }
 
-    public static void updateBannerComponent(World world, ItemStack stack, BlockPos pos) {
+    private static Stream<MapBannerMarker> getBanners(World world, ItemStack stack) {
         MapState mapState = FilledMapItem.getMapState(stack, world);
-        if (mapState == null || !mapState.isDirty()) return;
-        var found = mapState.getBanners().stream()
-            .filter(m -> m.pos().getX() == pos.getX() && m.pos().getZ() == pos.getZ() && BANNER_TYPES.contains(m.getDecorationType()))
+        if (mapState == null || !mapState.isDirty() || mapState.dimension != world.getRegistryKey())
+            return Stream.empty();
+        else
+            return mapState.getBanners().stream();
+    }
+
+    public static void updateBannerComponent(World world, ItemStack stack, BlockPos pos) {
+        var found = getBanners(world, stack)
+            .filter(m -> m.pos().getX() == pos.getX() && m.pos().getZ() == pos.getZ() && isBanner(m.getDecorationType()))
             .findAny();
         if (found.isPresent())
             addBannerComponent(stack, world, pos, found.get().getKey(), found.get().getDecorationType(), found.get().name());
@@ -58,9 +67,7 @@ public class MapDecorationsHelper {
     }
 
     public static void updateBannerComponents(World world, ItemStack stack) {
-        MapState mapState = FilledMapItem.getMapState(stack, world);
-        if (mapState == null || !mapState.isDirty()) return;
-        var keys = mapState.getBanners().stream().map(MapBannerMarker::getKey).collect(Collectors.toSet());
+        var keys = getBanners(world, stack).map(MapBannerMarker::getKey).collect(Collectors.toSet());
         removeBannerComponents(stack, key -> !keys.contains(key));
     }    
 }

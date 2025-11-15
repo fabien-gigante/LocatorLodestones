@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import java.util.Optional;
 
 @Mixin(MapDecorationsComponent.Decoration.class)
-public class DecorationMixin implements IDecorationExt {
+public abstract class DecorationMixin implements IDecorationExt {
     @Shadow @Final @Mutable
     public static Codec<MapDecorationsComponent.Decoration> CODEC;
 
