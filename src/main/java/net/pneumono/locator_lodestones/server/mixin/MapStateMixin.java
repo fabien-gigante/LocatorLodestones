@@ -39,7 +39,7 @@ public abstract class MapStateMixin {
     }
 
     /*
-    NOTE: Structures don't seem to have a relevant Y, so the following is very relevant after all...
+    NOTE: Structures don't seem to have a relevant Y, so the following is not relevant after all...
 
     @Inject(method = "addDecorationsNbt", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
     private static void extendDecoration(ItemStack stack, BlockPos pos, String id, RegistryEntry<MapDecorationType> decorationType, CallbackInfo ci, Decoration decoration) {
