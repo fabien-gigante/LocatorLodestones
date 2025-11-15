@@ -1,1 +1,1 @@
-- If mod also installed on server side, banners on maps appear on locator bar
+- fix MC-142686 and MC-142687
