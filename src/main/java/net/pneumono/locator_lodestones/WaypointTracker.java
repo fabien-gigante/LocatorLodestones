@@ -128,7 +128,7 @@ public class WaypointTracker extends AbstractTracker {
             GlobalPos pos = trackerComponent.target().get();
             if (pos.dimension() == dimension && pos.pos() != null) {
                 Integer color = ColorHandler.getColor(stack).orElse(ConfigManager.getConfig().colors().lodestoneColor().getColorWithAlpha());
-                TrackedWaypoint waypoint = new NamedWaypoint("lodestone_" + pos, LocatorLodestones.LODESTONE_STYLE, color, pos.pos(), getText(stack));
+                TrackedWaypoint waypoint = new NamedWaypoint("lodestone_" + pos + "_" + color, LocatorLodestones.LODESTONE_STYLE, color, pos.pos(), getText(stack));
                 waypoints.add(waypoint);
             }
         }

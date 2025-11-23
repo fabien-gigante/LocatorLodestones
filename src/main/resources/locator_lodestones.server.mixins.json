@@ -5,7 +5,8 @@
     "mixins": [
         "FilledMapItemMixin", 
         "DecorationMixin",
-        "MapStateMixin"
+        "MapStateMixin",
+        "CompassItemMixin"
     ],
     "injectors": {
         "defaultRequire": 1

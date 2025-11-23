@@ -1,6 +1,7 @@
 package net.pneumono.locator_lodestones;
 
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.MapColorComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -14,12 +15,11 @@ import java.util.regex.Pattern;
 
 public class ColorHandler {
     public static Optional<Integer> getColor(ItemStack stack) {
+        if (stack.get(DataComponentTypes.MAP_COLOR) instanceof MapColorComponent mapColor)
+            return Optional.of(mapColor.rgb());
         if (!ConfigManager.getConfig().colors().colorCustomization()) return Optional.empty();
-
         Optional<Integer> color = getColor(stack.get(DataComponentTypes.CUSTOM_NAME));
-        if (color.isEmpty()) {
-            color = getColor(stack.get(DataComponentTypes.ITEM_NAME));
-        }
+        if (color.isEmpty()) color = getColor(stack.get(DataComponentTypes.ITEM_NAME));
         return color;
     }
 

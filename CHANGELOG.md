@@ -1,1 +1,1 @@
-- fix MC-142686 and MC-142687
+- Easily changing lodestone waypoint colors

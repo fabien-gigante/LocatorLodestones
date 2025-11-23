@@ -39,11 +39,11 @@ Optionally adds a compass dial to the locator bar:
 
 
 Display the distance to the waypoint the player is aiming at:
-- only within a +/-10° angle accuracy
+- only visible if aimed within +/-10° angle
 - using the waypoint color
 - when shown, the experience level is hidden
 - working for standard entity waypoints and lodestone waypoints
-- under a config option (false by default)
+- under a config option: horizontal (x,z), euclidean(x,y,z, when possible) or none (default)
 
 ![Distance to waypoint](https://github.com/user-attachments/assets/7405aceb-ccc3-47d8-8fa4-5bc7bad90d8b)
 
@@ -60,8 +60,12 @@ Display map's points of interest as waypoints on the locator bar:
 
 ![Map's PoI](https://github.com/user-attachments/assets/8e439dd4-16da-432b-9e6c-6e11c7516a2f)
 
-Clock held by player chime at night time :
-- location configurable (none by default)
+Easily changing lodestone waypoint colors:
+- using the compass multiple times on a lodestone, will "randomly" cycles through different colors
+- only works if the mod is also installed server-side (optional)
+
+Clock held by player chime at night time:
+- location configurable (never by default)
   - inside bundles included (if enabled by config)
 - it plays a chime sound (configurable) at the end of every day
 - only works in overworld (when the clock itself works)
@@ -79,7 +83,7 @@ Configuration file format has been updated as follows (default values shown):
   "show_recovery_compasses": true,
   "show_spawn": false,
   "show_maps": false,
-  "show_distance": false,
+  "show_distance": "never",
   "show_in_spectator": false,
   "colors": {
     "lodestone_color": "random",
@@ -88,7 +92,7 @@ Configuration file format has been updated as follows (default values shown):
     "dial_color": "879e7b",
     "color_customization": true
   },
-  "clock_location": "none",
+  "clock_location": "never",
   "clock_sound": {
     "sound_id": "minecraft:block.note_block.chime"
   }
