@@ -41,7 +41,7 @@ public class ColorChromaHelper {
         int r = (color >> 16) & 0xff, g = (color >> 8) & 0xff, b = color & 0xff;
         float[] hsb = new float[3]; rgbToHsb(r, g, b, hsb);
         float h = (hsb[0] + HUE_STEP) % 1f;
-        float s = (float) Math.pow((hsb[1] * hsb[1] + SATURATION_STEP) % 1f, 0.5f);
+        float s = (float) Math.sqrt((hsb[1] * hsb[1] + SATURATION_STEP) % 1f);
         return hsbToRgb(h, s, hsb[2]);
     }
 
