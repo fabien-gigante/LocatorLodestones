@@ -1,5 +1,8 @@
 package net.pneumono.locator_lodestones.server;
 
+import net.minecraft.util.math.random.LocalRandom;
+import net.minecraft.util.math.BlockPos;
+
 public class ColorChromaHelper {
     public static void rgbToHsb(int r, int g, int b, float[] hsb) {
         float rf = r / 255f, gf = g / 255f, bf = b / 255f;
@@ -39,6 +42,13 @@ public class ColorChromaHelper {
         float[] hsb = new float[3]; rgbToHsb(r, g, b, hsb);
         float h = (hsb[0] + HUE_STEP) % 1f;
         float s = (hsb[1] + SATURATION_STEP) % 1f;
+        s = (float) Math.pow(s, 0.5f);
         return hsbToRgb(h, s, hsb[2]);
+    }
+
+    public static int colorFromPos(BlockPos pos) {
+        LocalRandom rand = new LocalRandom(pos.asLong());
+        float h = rand.nextFloat(), s = (float) Math.pow(rand.nextFloat(), 0.5f);
+        return hsbToRgb(h, s, 0.9f);
     }
 }
