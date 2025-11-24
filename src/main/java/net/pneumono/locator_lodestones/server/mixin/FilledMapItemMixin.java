@@ -6,7 +6,7 @@ import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.server.world.ServerWorld;
-import net.pneumono.locator_lodestones.server.MapDecorationsHelper;
+import net.pneumono.locator_lodestones.server.MapComponentsHelper;
 import net.minecraft.util.ActionResult;
 
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +27,7 @@ public abstract class FilledMapItemMixin {
         )
     )
     private void updateBannerComponent(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
-        MapDecorationsHelper.updateBannerComponent(context.getWorld(), context.getStack(), context.getBlockPos());
+        MapComponentsHelper.updateBannerComponent(context.getWorld(), context.getStack(), context.getBlockPos());
     }
 
     @Inject(
@@ -39,6 +39,6 @@ public abstract class FilledMapItemMixin {
         )
     )
     private void updateBannerComponents(ItemStack stack, ServerWorld world, Entity entity, @Nullable EquipmentSlot slot, CallbackInfo ci) {
-        MapDecorationsHelper.updateBannerComponents(world, stack);
+        MapComponentsHelper.updateBannerComponents(world, stack);
     }
 }

@@ -7,6 +7,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.LodestoneTrackerComponent;
+import net.minecraft.component.type.MapColorComponent;
 import net.minecraft.component.type.MapDecorationsComponent;
 import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
@@ -17,10 +19,13 @@ import net.minecraft.item.map.MapState;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ColorHelper;
+import net.minecraft.util.math.GlobalPos;
+import net.minecraft.util.math.random.LocalRandom;
 import net.minecraft.world.World;
 import net.pneumono.locator_lodestones.IDecorationExt;
 
-public class MapDecorationsHelper {
+public class MapComponentsHelper {
     private static Set<RegistryEntry<MapDecorationType>> BANNER_TYPES = Set.of(
         MapDecorationTypes.BANNER_WHITE, MapDecorationTypes.BANNER_ORANGE, MapDecorationTypes.BANNER_MAGENTA, MapDecorationTypes.BANNER_LIGHT_BLUE,
 	    MapDecorationTypes.BANNER_YELLOW, MapDecorationTypes.BANNER_LIME, MapDecorationTypes.BANNER_PINK, MapDecorationTypes.BANNER_GRAY,
@@ -69,5 +74,19 @@ public class MapDecorationsHelper {
         if (!needsUpdate(mapState, world)) return;
         var keys = mapState.getBanners().stream().map(MapBannerMarker::getKey).collect(Collectors.toSet());
         removeBannerComponents(stack, key -> !keys.contains(key));
-    }    
+    }
+
+    private static int getRandomColor(long seed) {
+        int color = new LocalRandom(seed).next(24);
+        return ColorHelper.withAlpha(255, ColorHelper.withBrightness(color, 0.9f));
+    }
+    
+    public static void setRandomColorComponent(ItemStack stack, LodestoneTrackerComponent newTracker) {
+        LodestoneTrackerComponent currentTracker = stack.get(DataComponentTypes.LODESTONE_TRACKER);
+        GlobalPos currentTarget = currentTracker == null ? null : currentTracker.target().orElse(null);
+        GlobalPos newTarget = newTracker.target().orElse(null);
+        MapColorComponent mapColor = (currentTarget != null && currentTarget.equals(newTarget)) ? stack.get(DataComponentTypes.MAP_COLOR) : null;
+        int color = getRandomColor(mapColor == null ? newTarget.pos().asLong() : mapColor.rgb());
+        stack.set(DataComponentTypes.MAP_COLOR, new MapColorComponent(color));
+    }
 }

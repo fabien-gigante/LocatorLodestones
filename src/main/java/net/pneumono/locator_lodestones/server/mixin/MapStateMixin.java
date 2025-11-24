@@ -1,6 +1,6 @@
 package net.pneumono.locator_lodestones.server.mixin;
 
-import net.pneumono.locator_lodestones.server.MapDecorationsHelper;
+import net.pneumono.locator_lodestones.server.MapComponentsHelper;
 import net.minecraft.item.map.MapDecorationType;
 import net.minecraft.item.map.MapState;
 import net.minecraft.registry.RegistryKey;
@@ -26,7 +26,7 @@ public abstract class MapStateMixin {
     @Inject(method = "getMarker", at = @At("RETURN"), cancellable = true)
     private void fixBannerRotation(RegistryEntry<MapDecorationType> type, @Nullable WorldAccess world, double rotation, float dx, float dz, CallbackInfoReturnable<MapState.Marker> cir) {
         MapState.Marker marker = cir.getReturnValue();
-        if (marker != null && this.dimension == World.NETHER && MapDecorationsHelper.isBanner(type))
+        if (marker != null && this.dimension == World.NETHER && MapComponentsHelper.isBanner(type))
             cir.setReturnValue(new MapState.Marker(type, marker.x(), marker.y(), (byte)8));
     }
 

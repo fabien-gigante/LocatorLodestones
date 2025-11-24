@@ -15,12 +15,17 @@ import java.util.regex.Pattern;
 
 public class ColorHandler {
     public static Optional<Integer> getColor(ItemStack stack) {
-        if (stack.get(DataComponentTypes.MAP_COLOR) instanceof MapColorComponent mapColor)
-            return Optional.of(mapColor.rgb());
-        if (!ConfigManager.getConfig().colors().colorCustomization()) return Optional.empty();
-        Optional<Integer> color = getColor(stack.get(DataComponentTypes.CUSTOM_NAME));
-        if (color.isEmpty()) color = getColor(stack.get(DataComponentTypes.ITEM_NAME));
-        return color;
+        return getColor(stack, false);
+    }
+    
+    public static Optional<Integer> getColor(ItemStack stack, boolean checkColorComponent) {
+        Optional<Integer> color = Optional.empty();
+        if (checkColorComponent && stack.get(DataComponentTypes.MAP_COLOR) instanceof MapColorComponent mapColor)
+            color = Optional.of(mapColor.rgb());
+        if (!ConfigManager.getConfig().colors().colorCustomization()) return color;
+        Optional<Integer> customColor = getColor(stack.get(DataComponentTypes.CUSTOM_NAME));
+        if (customColor.isEmpty()) customColor = getColor(stack.get(DataComponentTypes.ITEM_NAME));
+        return customColor.isEmpty() ? color : customColor;
     }
 
     public static Optional<Integer> getColor(Text text) {
