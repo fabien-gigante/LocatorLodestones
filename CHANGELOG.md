@@ -1,1 +1,1 @@
-- Easily changing lodestone waypoint colors
+- Support of 1.21.11

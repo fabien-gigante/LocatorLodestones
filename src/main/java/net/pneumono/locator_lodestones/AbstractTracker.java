@@ -32,7 +32,12 @@ public abstract class AbstractTracker {
     
     public void tick(MinecraftClient client) { 
         ClientPlayerEntity player = client.player;
-        if (!dirty || player == null || !player.isLoaded()) return;
+        if (!dirty || player == null) return;
+        //? if >=1.21.11 {        
+        if (!player.networkHandler.isLoaded()) return;
+        //?} else {
+        /*if (!player.isLoaded()) return;
+        *///?}
         if (lastUpdateTime <= player.age && player.age < lastUpdateTime + UPDATE_COOLDOWN) return;
         lastUpdateTime = player.age;
         dirty = false;
