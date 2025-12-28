@@ -28,8 +28,8 @@ public class GrindstoneScreenHandlerTopInputSlotMixin extends Slot {
 	}
 
 	// Grindstone parent can allow additional items as input 
-	@Inject(method = "canInsert", at = @At(value = "TAIL"), cancellable=true)
-	private void canInsert(ItemStack stack, CallbackInfoReturnable<Boolean> ci) {
-		ci.setReturnValue( ci.getReturnValue() || ((ISlotListener)grindstoneHandler).isValidInput(this, stack));
+	@ModifyReturnValue(method = "canInsert", at = @At("RETURN"))
+	private boolean modifyCanInsert(boolean original, ItemStack stack) {
+		return original || ((ISlotListener) grindstoneHandler).isValidInput(this, stack);
 	}
 }

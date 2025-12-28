@@ -5,8 +5,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.inventory.Inventory;
@@ -26,14 +26,13 @@ public abstract class GrindstoneScreenHandlerMixin extends ScreenHandler impleme
 
 	protected GrindstoneScreenHandlerMixin(ScreenHandlerType<?> type, int syncId) { super(type, syncId); }
 
-	@Inject(method={"getOutputStack"}, at={@At(value="RETURN")}, cancellable = true)
-	private void getOutputStack(ItemStack firstInput, ItemStack secondInput, CallbackInfoReturnable<ItemStack> ci) {
-		ItemStack returnValue = ci.getReturnValue();
-		if (returnValue != ItemStack.EMPTY || !isValidLodestoneTrackerRecipe(firstInput, secondInput)) return;
-		returnValue = firstInput.copy();
-		returnValue.remove(DataComponentTypes.LODESTONE_TRACKER);
-        returnValue.remove(DataComponentTypes.MAP_COLOR);
-		ci.setReturnValue(returnValue);
+	@ModifyReturnValue(method = "getOutputStack", at = @At("RETURN"))
+	private ItemStack modifyOutputStack(ItemStack original, ItemStack firstInput, ItemStack secondInput) {
+		if (original != ItemStack.EMPTY || !isValidLodestoneTrackerRecipe(firstInput, secondInput)) return original;
+		ItemStack result = firstInput.copy();
+		result.remove(DataComponentTypes.LODESTONE_TRACKER);
+		result.remove(DataComponentTypes.MAP_COLOR);
+		return result;
 	}
 
 	public boolean isValidInput(Slot slot, ItemStack stack) {
