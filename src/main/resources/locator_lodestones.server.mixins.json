@@ -6,7 +6,9 @@
         "FilledMapItemMixin", 
         "DecorationMixin",
         "MapStateMixin",
-        "CompassItemMixin"
+        "CompassItemMixin",
+		"GrindstoneScreenHandlerMixin",
+		"GrindstoneScreenHandlerTopInputSlotMixin"
     ],
     "injectors": {
         "defaultRequire": 1

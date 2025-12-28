@@ -64,6 +64,9 @@ Easily changing lodestone waypoint colors:
 - using the compass multiple times on a lodestone, will "randomly" cycles through different colors
 - only works if the mod is also installed server-side (optional)
 
+Demagnetize a lodestone compass using a grindstone:
+- only works if the mod is also installed server-side (optional)
+
 Clock held by player chime at night time:
 - location configurable (never by default)
   - inside bundles included (if enabled by config)

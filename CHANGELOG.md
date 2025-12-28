@@ -1,1 +1,1 @@
-- Support of 1.21.11
+- Demagnetize a lodestone compass using a grindstone
