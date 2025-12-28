@@ -13,7 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.GrindstoneScreenHandler;
 import net.minecraft.screen.slot.Slot;
 
-import net.pneumono.locator_lodestones.server.IScreenHandlerSlotListener;
+import net.pneumono.locator_lodestones.server.ISlotListener;
 
 @Mixin(targets = "net/minecraft/screen/GrindstoneScreenHandler$2")
 public class GrindstoneScreenHandlerTopInputSlotMixin extends Slot {
@@ -30,6 +30,6 @@ public class GrindstoneScreenHandlerTopInputSlotMixin extends Slot {
 	// Grindstone parent can allow additional items as input 
 	@Inject(method = "canInsert", at = @At(value = "TAIL"), cancellable=true)
 	private void canInsert(ItemStack stack, CallbackInfoReturnable<Boolean> ci) {
-		ci.setReturnValue( ci.getReturnValue() || ((IScreenHandlerSlotListener)grindstoneHandler).isValidInput(this, stack));
+		ci.setReturnValue( ci.getReturnValue() || ((ISlotListener)grindstoneHandler).isValidInput(this, stack));
 	}
 }

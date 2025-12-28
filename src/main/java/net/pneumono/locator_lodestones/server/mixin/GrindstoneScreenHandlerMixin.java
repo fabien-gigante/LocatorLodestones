@@ -17,10 +17,10 @@ import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
 
-import net.pneumono.locator_lodestones.server.IScreenHandlerSlotListener;
+import net.pneumono.locator_lodestones.server.ISlotListener;
 
 @Mixin(GrindstoneScreenHandler.class)
-public abstract class GrindstoneScreenHandlerMixin extends ScreenHandler implements IScreenHandlerSlotListener {
+public abstract class GrindstoneScreenHandlerMixin extends ScreenHandler implements ISlotListener {
 	@Shadow @Final Inventory input;
 	@Shadow @Final ScreenHandlerContext context;    
 
